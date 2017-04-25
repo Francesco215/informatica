@@ -64,8 +64,70 @@ void print_matrix (void){
 */ 
 int step (int* next_i, int* next_j){
   //creo un wile loop che mi fa cadere il fiocco di neve mentre non confina con nessun altro fiocco di neve
-  //while((mat[i+1][j]==0)||(mat[i][j+1]==0)||(mat[i][j-1]==0)){
-
-  //s}
+  char giu=1;
+  char fdestra=1;
+  char mdestra=1;
+  char fsinistra=1;
+  char msinistra=1;
+  if((mat[*next_i+1][*next_j]!=1)&&(*next_i<N-1)){giu=0;}
+  if(mat[*next_i][*next_j+1]!=1){fdestra=0;}
+  if(*next_j<M-1){mdestra=0;}
+  if(mat[*next_i][*next_j-1]!=1){fsinistra=0;}
+  if(*next_j>=0){msinistra=0;}
+  //fiocchi accanto al fiocco, il fiocco viene bloccato ne viene creato uno nuovo all'origine
+  if(fsinistra+giu+fdestra>0){
+    *next_i=0;
+    *next_j=M/2;
+    mat[*next_i][*next_j]=1;
+  }//caso in cui non ci nono fiocchi a lato
+  else{
+    //caso in cui il fiocco cade indisturbato
+    if((mdestra==0)&&(msinistra==0)){
+      int scelta=my_rand()%3;
+      if(scelta==0){
+        mat[*next_i][*next_j]=0;
+        next_i++;
+        mat[*next_i][*next_j]=1;
+      }
+      if(scelta==1){
+        mat[*next_i][*next_j]=0;
+        next_j++;
+        mat[*next_i][*next_j]=1;
+      }
+      if(scelta==2){
+        mat[*next_i][*next_j]=0;
+        next_j--;
+        mat[*next_i][*next_j]=1;
+      }
+    }
+    //caso in cui il fiocco ha un muro a destra
+    if(mdestra==1){
+      int scelta=my_rand()%2;
+      if(scelta==0){
+        mat[*next_i][*next_j]=0;
+        next_i++;
+        mat[*next_i][*next_j]=1;
+      }
+      if(scelta==1){
+        mat[*next_i][*next_j]=0;
+        next_j--;
+        mat[*next_i][*next_j]=1;
+      }
+    }
+    //caso in cui il fiocco ha un muro a sinistra
+    if(msinistra==1){
+      int scelta=my_rand()%2;
+      if(scelta==0){
+        mat[*next_i][*next_j]=0;
+        next_i++;
+        mat[*next_i][*next_j]=1;
+      }
+      if(scelta==1){
+        mat[*next_i][*next_j]=0;
+        next_j++;
+        mat[*next_i][*next_j]=1;
+      }
+    }
+  }
 }
 #endif

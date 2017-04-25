@@ -9,8 +9,8 @@
 #define __DROP__H
 
 /* altezza (N) e larghezza (M) dell'area di caduta */
-#define N 41
-#define M 50
+#define N 15
+#define M 20
 
 
 /* matrice globale mat in cui ogni elemento rappresenta una sottoarea nell'area di caduta */
