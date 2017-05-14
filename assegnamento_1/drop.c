@@ -17,15 +17,15 @@
 char mat[N][M]; 
 
 void init_all (int seed){
-  for(int i=0;i<=N;i++){
-    for(int j=0;j<=M;j++){mat[i][j]=0;}
+  for(int i=0;i<N;i++){
+    for(int j=0;j<M;j++){mat[i][j]=0;}
   }
   my_srand(seed);
 }
 
 void print_matrix (void){
-  for(int i=0;i<=N;i++){
-    for(int j=0;j<=M;j++){
+  for(int i=0;i<N;i++){
+    for(int j=0;j<M;j++){
       if(mat[i][j]==0){printf("%c",EMPTY);}
       else{printf("%c",FULL);}
     }
@@ -64,12 +64,12 @@ void print_matrix (void){
 */ 
 int step (int* next_i, int* next_j){
   //creo un wile loop che mi fa cadere il fiocco di neve mentre non confina con nessun altro fiocco di neve
-  char giu=1;
-  char fdestra=1;
-  char mdestra=1;
-  char fsinistra=1;
-  char msinistra=1;
-  if((mat[*next_i+1][*next_j]!=1)&&(*next_i<N-1)){giu=0;}
+  int giu=1;
+  int fdestra=1;
+  int mdestra=1;
+  int fsinistra=1;
+  int msinistra=1;
+  if((mat[*next_i+1][*next_j]!=1)||(*next_i<N-1)){giu=0;}
   if(mat[*next_i][*next_j+1]!=1){fdestra=0;}
   if(*next_j<M-1){mdestra=0;}
   if(mat[*next_i][*next_j-1]!=1){fsinistra=0;}
@@ -86,17 +86,17 @@ int step (int* next_i, int* next_j){
       int scelta=my_rand()%3;
       if(scelta==0){
         mat[*next_i][*next_j]=0;
-        next_i++;
+        *next_i++;
         mat[*next_i][*next_j]=1;
       }
       if(scelta==1){
         mat[*next_i][*next_j]=0;
-        next_j++;
+        *next_j++;
         mat[*next_i][*next_j]=1;
       }
       if(scelta==2){
         mat[*next_i][*next_j]=0;
-        next_j--;
+        *next_j--;
         mat[*next_i][*next_j]=1;
       }
     }
@@ -105,12 +105,12 @@ int step (int* next_i, int* next_j){
       int scelta=my_rand()%2;
       if(scelta==0){
         mat[*next_i][*next_j]=0;
-        next_i++;
+        *next_i++;
         mat[*next_i][*next_j]=1;
       }
       if(scelta==1){
         mat[*next_i][*next_j]=0;
-        next_j--;
+        *next_j--;
         mat[*next_i][*next_j]=1;
       }
     }
@@ -119,15 +119,16 @@ int step (int* next_i, int* next_j){
       int scelta=my_rand()%2;
       if(scelta==0){
         mat[*next_i][*next_j]=0;
-        next_i++;
+        *next_i++;
         mat[*next_i][*next_j]=1;
       }
       if(scelta==1){
         mat[*next_i][*next_j]=0;
-        next_j++;
+        *next_j++;
         mat[*next_i][*next_j]=1;
       }
     }
   }
+  return *(next_i,next_j);
 }
 #endif
