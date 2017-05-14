@@ -18,7 +18,7 @@ char mat[N][M];
 
 void init_all (int seed){
   for(int i=0;i<N;i++){
-    for(int j=0;j<M;j++){mat[i][j]=0;}
+    for(int j=0;j<M;j++){mat[i][j]=EMPTY;}
   }
   my_srand(seed);
 }
@@ -26,7 +26,7 @@ void init_all (int seed){
 void print_matrix (void){
   for(int i=0;i<N;i++){
     for(int j=0;j<M;j++){
-      if(mat[i][j]==0){printf("%c",EMPTY);}
+      if(mat[i][j]==EMPTY){printf("%c",EMPTY);}
       else{printf("%c",FULL);}
     }
     printf("\n");
@@ -64,71 +64,54 @@ void print_matrix (void){
 */ 
 int step (int* next_i, int* next_j){
   //creo un wile loop che mi fa cadere il fiocco di neve mentre non confina con nessun altro fiocco di neve
-  int giu=1;
-  int fdestra=1;
-  int mdestra=1;
-  int fsinistra=1;
-  int msinistra=1;
-  if((mat[*next_i+1][*next_j]!=1)||(*next_i<N-1)){giu=0;}
-  if(mat[*next_i][*next_j+1]!=1){fdestra=0;}
-  if(*next_j<M-1){mdestra=0;}
-  if(mat[*next_i][*next_j-1]!=1){fsinistra=0;}
-  if(*next_j>=0){msinistra=0;}
-  //fiocchi accanto al fiocco, il fiocco viene bloccato ne viene creato uno nuovo all'origine
-  if(fsinistra+giu+fdestra>0){
-    *next_i=0;
-    *next_j=M/2;
-    mat[*next_i][*next_j]=1;
-  }//caso in cui non ci nono fiocchi a lato
-  else{
-    //caso in cui il fiocco cade indisturbato
-    if((mdestra==0)&&(msinistra==0)){
-      int scelta=my_rand()%3;
-      if(scelta==0){
-        mat[*next_i][*next_j]=0;
-        *next_i++;
-        mat[*next_i][*next_j]=1;
+  int i=0,j=M/2;
+  int blocco=0;
+  int mdestra=0;
+  int msinistra=0;
+  while(blocco==0){
+    if((mat[i+1][j]==FULL)||(i=N-1)||(mat[i][j-1]==FULL)||(mat[i][j+1]==FULL)){blocco=1;}
+    if(j==M-1){mdestra=1;}
+    if(j==0){msinistra=1;}
+    //fiocchi accanto al fiocco, il fiocco viene bloccato ne viene creato uno nuovo all'origine
+    if(blocco==0){//caso in cui non ci nono fiocchi a lato
+      //caso in cui il fiocco cade indisturbato
+      if((mdestra==0)&&(msinistra==0)){
+        int scelta=my_rand()%3;
+        if(scelta==0){
+          i++;
+        }
+        if(scelta==1){
+          j++;
+        }
+        if(scelta==2){
+          j--;
+        }
       }
-      if(scelta==1){
-        mat[*next_i][*next_j]=0;
-        *next_j++;
-        mat[*next_i][*next_j]=1;
+      //caso in cui il fiocco ha un muro a destra
+      if(mdestra==1){
+        int scelta=my_rand()%2;
+        if(scelta==0){
+          i++;
+        }
+        if(scelta==1){
+          j--;
+        }
       }
-      if(scelta==2){
-        mat[*next_i][*next_j]=0;
-        *next_j--;
-        mat[*next_i][*next_j]=1;
-      }
-    }
-    //caso in cui il fiocco ha un muro a destra
-    if(mdestra==1){
-      int scelta=my_rand()%2;
-      if(scelta==0){
-        mat[*next_i][*next_j]=0;
-        *next_i++;
-        mat[*next_i][*next_j]=1;
-      }
-      if(scelta==1){
-        mat[*next_i][*next_j]=0;
-        *next_j--;
-        mat[*next_i][*next_j]=1;
-      }
-    }
-    //caso in cui il fiocco ha un muro a sinistra
-    if(msinistra==1){
-      int scelta=my_rand()%2;
-      if(scelta==0){
-        mat[*next_i][*next_j]=0;
-        *next_i++;
-        mat[*next_i][*next_j]=1;
-      }
-      if(scelta==1){
-        mat[*next_i][*next_j]=0;
-        *next_j++;
-        mat[*next_i][*next_j]=1;
+      //caso in cui il fiocco ha un muro a sinistra
+      if(msinistra==1){
+        int scelta=my_rand()%2;
+        if(scelta==0){
+          i++;
+        }
+        if(scelta==1){
+          j++;
+        }
       }
     }
   }
-  return *(next_i,next_j);
+  *next_i=i;
+  *next_j=j;
+  if(mat[0][M/2]==FULL) return -1;
+  else return 0;
 }
 #endif
