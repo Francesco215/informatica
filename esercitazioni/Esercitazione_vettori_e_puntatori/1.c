@@ -1,25 +1,18 @@
 #include <stdio.h>
-#include <stdlib.h>
-
-static int *vettore;
-static int passi=0;
-//prende una sequenza di nummeri da standard input terminata da 0 e sputa un vettore
-void MkVector(void){
-	int a,b,c;
-	scanf("%d",&a);
-	if(a==0){
-		vettore=(int *)malloc((passi-1)*sizeof(int));
-		return;
+int cerca(int *vec,int x){
+	int i=0;
+	while(vec[i]!='\0'){
+		if (vec[i]==x) return 1;
+		i++;
 	}
-	b=a;
-	c=passi;
-	passi++;
-	MkVector();
-	vettore[c]=b;
+	return 0;
+
 }
 
+int vettore[5]={1,2,3,6,8};
 int main(void){
-	MkVector();
-	for(int i=0;i<passi;i++) printf("%d  ",vettore[i]);
+	printf("%d\n",cerca(vettore,6));
 	return 0;
+
 }
+
