@@ -10,26 +10,26 @@ gli si fornisce un puntatore a cui viene fatto puntare il vettore della sequenza
 uno stop che termina la sequenza
 
 */
-static int *vettore;
-int MkVector(int stop){
+int MkVector(int *V,int stop){
 	static int passi=0;
 	int a,b,c;
 	scanf("%d",&a);
 	if(a==stop){
-		vettore=(int *)malloc((passi-1)*sizeof(int));
+		V=(int *)malloc((passi-1)*sizeof(int));
 		return 0;
 	}
 	b=a;
 	c=passi;
 	passi++;
-	MkVector(stop);
-	vettore[c]=b;
+	MkVector(V,stop);
+	printf("%d,%d\n",c,b);
+	V[c]=b;
 	if(c==0) return passi;
 	return 0;
 }
-
+int *vettore;
 int main(void){
-	int passi=MkVector(0);
+	int passi=MkVector(vettore,0);
 	for(int i=0;i<passi;i++) printf("%d  ",vettore[i]);
 	printf("\n");
 	return 0;

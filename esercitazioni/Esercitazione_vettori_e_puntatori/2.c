@@ -1,20 +1,20 @@
 #include <stdio.h>
 
 void max(double *vec,double *pmax,int *pind){
-	int i=0;
-	while(vec[i]!='\0'){
+	for(int i=0;vec[i]!='\0';i++){
 		if (vec[i]>*pmax){
 			*pmax=vec[i];
+			*pind=i;
 		}
-	i++;
 	}
 }
 
+double vettore[]={1,2,12,6,8,3,1,13,8,9,2,0};
+double Max;
+int ind;
+
 int main(void){
-	double vettore[5]={1,2,3,6,8};
-	double *max;
-	int *ind;
-	max(vettore,&max,&ind);
-	printf("%f %lf \n",*max,max);
+	max(vettore,&Max,&ind);
+	printf("%f %d \n",Max,ind);
 	return 0;
 }
