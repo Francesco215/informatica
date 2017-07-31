@@ -20,13 +20,17 @@ int numero_righe(char* nome_file){
 	return nummero;
 }
 
-/*int scambia(studente_t *a, studente_t *b){
-
-}*/
+void scambia(studente_t *a, studente_t *b){
+	studente_t asd;
+	asd=*a;
+	*a=*b;
+	*b=asd;
+}
 
 int main(void){
 	//creo un file sistemato
-	studente_t alunno[numero_righe("./elenco_nomi")];
+	int nr=numero_righe("./elenco_nomi");
+	studente_t alunno[nr];
 	FILE *elenco,*input;
 	input=fopen("./elenco_nomi","r");
 	elenco=fopen("./elenco_sistemato","w");
@@ -40,7 +44,7 @@ int main(void){
 	elenco=fopen("./elenco_sistemato","r");
 
 	//leggo il file sistemato e assegno le robe a un vettore di studenti_t
-	for(int i=0;i<numero_righe("./elenco_nomi");i++){	
+	for(int i=0;i<nr;i++){	
 		fgets(alunno[i].nome,50,elenco);
 		fgets(alunno[i].cognome,50,elenco);
 		char temp[50];
@@ -51,5 +55,16 @@ int main(void){
 	fclose(elenco);
 
 	//ordino gli studenti in ordine alfabetico
-	
+	for(int i=0;i<nr;i++){
+		studente_t max=alunno[i];
+		int m;
+		for(int j=i;j<nr;j++){
+			if(alunno[j].nome[0]>max.nome[0]){
+				max=alunno[j];
+				m=j;
+			}
+		}
+		scambia(&alunno[i],&alunno[m]);
+		printf("%s\n",alunno[i].nome);
+	}
 }
