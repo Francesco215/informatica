@@ -36,10 +36,10 @@ int main (void) {
   init_matrix(a,0,M1); 
 
   a = new_matrix(N1,M1);
-  
+  printf("suca\n");
   /* inizializzazione della matrice a EMPTY*/
   init_matrix(a,N1,M1);
-
+ 
   /* stampa */
   fprint_matrix(stdout,a,N1,M1);
   free_matrix(&a,N1);

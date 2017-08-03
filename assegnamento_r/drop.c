@@ -6,6 +6,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+#include "myrand.h"
 
 /* protezione inclusioni multiple */
 #ifndef __DROP__H
@@ -46,63 +48,25 @@ typedef struct list  {
   struct list * next; /* puntatore al prossimo elemento della lista */
 } lista_t;
 
-
-/** (FORNITA DAI DOCENTI)
-    alloca una nuova matrice che rappresenta l'area di caduta utilizzando 
-    la rappresentazione con array di puntatori a righe
-    (senza inizializzarla) 
-   
-   \param n numero di righe
-   \param m numero di colonne
-
-   \retval NULL se si e' verificato un errore (setta errno)
-   \retval p il puntatore alla matrice allocata
-*/
-char ** new_matrix (unsigned n, unsigned m);
-char ** new_matrix (unsigned n, unsigned m){
-  char **p;
-  p=malloc(m*sizeof(char *));
-  for (int a=0;a<m;a++) p[a]=malloc(n+sizeof(char));
-  return p;
-}
-
-/** (FORNITA DAI DOCENTI) 
-   stampa la matrice mat sul file "f" (gia' aperto) usando 
-   -- il carattere '.' (EMPTY) per le posizioni vuote
-   -- il carattere '*' (FULL) per le posizioni piene 
-   -- il carattere '@' (OBJECT) per le posizioni occupate dagli ostacoli
-(i caratteri utilizzati nelle macro che li definiscono)
-
-   \param f il file in cui stampare (gia' aperto in scrittura)
-   \param mat il puntatore alla matrice
-   \param n numero di righe
-   \param n numero di colonne
-*/
-void fprint_matrix (FILE* f, char** mat, unsigned n, unsigned m);
-
-void fprint_matrix (FILE* f, char** mat, unsigned n, unsigned m){
-  for(int a=0;a<n;a++){
-    for(int b=0;b<m;b++){
-      if(mat[a][b]==EMPTY) fprintf(f,"%c\n",EMPTY);
-      if(mat[a][b]==FULL) fprintf(f,"%c\n",FULL);
-      if(mat[a][b]==OBSTACLE) fprintf(f,"%c\n",OBSTACLE);
-    }
-  }
-}
 /** inizializza la matrice mat settando tutti i valori a EMPTY
    
    \param mat puntatore alla matrice 
    \param n numero di righe
    \param m numero di colonne
 */
-void init_matrix (char** mat, unsigned n, unsigned m);
 
 void init_matrix (char** mat, unsigned n, unsigned m){
+  if(mat==NULL||n==0||m==0){
+    fprintf(stderr,"matrice malformata\n");
+    mat=NULL;
+    return;
+  }
   for(int a=0;a<n;a++){
     for (int b=0;b<m;b++){
       mat[a][b]=EMPTY;
     }
   }
+  
 }
 
 /** libera la memoria occupata dalla matrice e mette a NULL il puntatore pmat
@@ -113,7 +77,7 @@ void init_matrix (char** mat, unsigned n, unsigned m){
 void free_matrix (char*** pmat, unsigned n){
   for(int i=0;i<n;i++) free((*pmat)[i]);
   free(*pmat);
-  pmat=NULL;
+  *pmat=NULL;
 }
 
 /** calcola la caduta della prossima particella restituendo le coordinate (i,j) del prossimo elemento dell'area da mettere a FULL
@@ -162,7 +126,37 @@ void free_matrix (char*** pmat, unsigned n){
     in questo caso non viene modificato il valore di *next_i *next_j
 
 */ 
-int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m);
+int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
+  my_srand(time(NULL));
+  if(mat==NULL || n<=0 || m<=0){
+    fprintf(stderr,"parametri non validi\n");
+    return EXIT_FAILURE;
+  }
+  //entrata bloccata
+  if(mat[0][m/2]==FULL) return -1;
+  //calcolo passi
+  next_i++;
+  if(*next_j==0 && my_rand()%2==0) (*next_j)++;
+  if(*next_j==m-1 && my_rand()%2==0) (*next_j)--;
+  if(*next_j>1 && *next_j<m-1) next_j=next_j+my_rand()%3-1;
+
+  //calcolo quando fermarmi
+  // controllo[0] vale 0 se non vi sono elementi lungo la croce, 1 se ce ne sono 
+  // controllo[1] vale 0 se non vi sono elementi lungo la diagonale, 1 se ce ne sono
+  int controllo[2]={0,0};
+  if(mat[*next_i+1][*next_j]==FULL || mat[*next_i-1][*next_j]==FULL || mat[*next_i][*next_j+1]==FULL || mat[*next_i][*next_j-1]==FULL){
+    controllo[0]=1;
+  }
+  if(mat[*next_i+1][*next_j+1]==FULL || mat[*next_i-1][*next_j-1]==FULL || mat[*next_i-1][*next_j+1]==FULL || mat[*next_i+1][*next_j-1]==FULL){
+    controllo[1]=1;
+  }
+  if(ad==NONE && (mat[(*next_i)+1][*next_j]==FULL||mat[(*next_i)+1][*next_j]==OBSTACLE)) return 0; //controlla se è corretto
+  if(ad==CROSS && controllo[0]==1) return 0;
+  if(ad==DIAGONAL && controllo[1]==1) return 0;
+  if(ad==BOTH && controllo[0]==1 && controllo[1]==1)return 0;
+  if(*next_i==n-1) return 0;
+  step(next_i,next_j,ad,mat,n,m);
+}
 
 
 
