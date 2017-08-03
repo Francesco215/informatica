@@ -8,19 +8,25 @@
 #ifndef __MYRAND__H
 #define __MYRAND__H
 #include <math.h>
+#include <stdlib.h>
 
-int lastnumber;
+
+unsigned int lastnumber;
 
 void my_srand(int seed){
-	lastnumber=seed;
+	//lastnumber=seed;
+	strand(seed);
 }
 
 int my_rand(void){
+	/*
 	int M=2147483647;
 	int a=16807;
 	int max=10000;
 	lastnumber=(lastnumber*a)%M;
 	return lastnumber%max;
+	*/
+	rand(NULL);
 }
 #endif
 

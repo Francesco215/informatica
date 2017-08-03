@@ -29,24 +29,24 @@ int main (void) {
   mat = new_matrix(N,M);
   init_matrix(mat,N,M);
   fprint_matrix(stdout,mat,N,M);
-  
+    
   /* simulazione adj NONE */
-     for (k=0;k< NSTEP; k++) {
-   /* calcolo prossimo passo */
-   /* modifica matrice */
-   if ( step(&i,&j,NONE, mat,N,M) == -1 ) break;
-   /* altrimenti ho un elemento da riempire */
-   mat[i][j] = FULL;
-   /* stampa */
-   system("clear");
-   printf("Drop step %d di %d\n", k + 1, NSTEP);
-   fprint_matrix(stdout,mat,N,M);
-   printf("NONE riempita posizione %d, %d\n",i, j);
-   /* attesa eventuale */
-   #ifdef WAIT
-   ATTESA 
-   #endif
-   }
+    for (k=0;k< NSTEP; k++) {
+      /* calcolo prossimo passo */
+      /* modifica matrice */
+      if ( step(&i,&j,NONE, mat,N,M) == -1 ) break;
+      /* altrimenti ho un elemento da riempire */
+      mat[i][j] = FULL;
+      /* stampa */
+      system("clear");
+      printf("Drop step %d di %d\n", k + 1, NSTEP);
+      fprint_matrix(stdout,mat,N,M);
+      printf("NONE riempita posizione %d, %d\n",i, j);
+      /* attesa eventuale */
+      #ifdef WAIT
+      ATTESA 
+      #endif
+    }
   
    free_matrix(&mat,N);
 

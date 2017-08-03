@@ -127,35 +127,54 @@ void free_matrix (char*** pmat, unsigned n){
 
 */ 
 int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
-  my_srand(time(NULL));
-  if(mat==NULL || n<=0 || m<=0){
+  static int a=0;
+  if(a==0){
+    *next_i=0;
+    *next_j=m/2;
+    a=4;
+    srand(time(NULL));
+  }
+  //gestione parametri invalidi
+  if(mat==NULL||n<=0||m<=0){
     fprintf(stderr,"parametri non validi\n");
-    return EXIT_FAILURE;
+    return -1;
   }
   //entrata bloccata
   if(mat[0][m/2]==FULL) return -1;
   //calcolo passi
-  next_i++;
-  if(*next_j==0 && my_rand()%2==0) (*next_j)++;
-  if(*next_j==m-1 && my_rand()%2==0) (*next_j)--;
-  if(*next_j>1 && *next_j<m-1) next_j=next_j+my_rand()%3-1;
+  (*next_i)++;
 
-  //calcolo quando fermarmi
+  //ysnp è un vettore che indica le posizioni libere
+  int ysnp[3]={(*next_j)-1,*next_j,(*next_j)+1};
+  if(*next_j==0 || mat[*next_i][(*next_j)-1]==FULL) ysnp[0]=1;
+  if(*next_j==m-1 || mat[*next_i][(*next_j)+1]==FULL) ysnp[2]=1;
+  if(mat[*next_i][*next_j]==FULL) ysnp[1]=1;
+  int len=ysnp[0]+ysnp[1]+ysnp[2];
+  int asd[len];
+  for(int i=0;i<len;i++){
+    int j=0;
+    if(ysnp[i]!=1){
+      asd[j]=ysnp[i];
+      j++;
+    }
+  }
+  *next_j=asd[rand()%len];
+
+  if(*next_i==n-1) return 0;//lo metto prima per evitare la segmentation
   // controllo[0] vale 0 se non vi sono elementi lungo la croce, 1 se ce ne sono 
   // controllo[1] vale 0 se non vi sono elementi lungo la diagonale, 1 se ce ne sono
   int controllo[2]={0,0};
-  if(mat[*next_i+1][*next_j]==FULL || mat[*next_i-1][*next_j]==FULL || mat[*next_i][*next_j+1]==FULL || mat[*next_i][*next_j-1]==FULL){
-    controllo[0]=1;
-  }
-  if(mat[*next_i+1][*next_j+1]==FULL || mat[*next_i-1][*next_j-1]==FULL || mat[*next_i-1][*next_j+1]==FULL || mat[*next_i+1][*next_j-1]==FULL){
-    controllo[1]=1;
-  }
+  if(mat[(*next_i)+1][*next_j]==FULL || mat[(*next_i)-1][*next_j]==FULL || mat[*next_i][(*next_j)+1]==FULL || mat[*next_i][(*next_j)-1]==FULL) controllo[0]=1;
+  if(mat[(*next_i)+1][(*next_j)+1]==FULL || mat[(*next_i)-1][(*next_j)-1]==FULL || mat[(*next_i)-1][(*next_j)+1]==FULL || mat[(*next_i)+1][(*next_j)-1]==FULL) controllo[1]=1;
+
+  //calcolo quando fermarmi
   if(ad==NONE && (mat[(*next_i)+1][*next_j]==FULL||mat[(*next_i)+1][*next_j]==OBSTACLE)) return 0; //controlla se è corretto
   if(ad==CROSS && controllo[0]==1) return 0;
   if(ad==DIAGONAL && controllo[1]==1) return 0;
   if(ad==BOTH && controllo[0]==1 && controllo[1]==1)return 0;
-  if(*next_i==n-1) return 0;
+  printf("%d  %d\n",*next_j,*next_i);
   step(next_i,next_j,ad,mat,n,m);
+  a=0;
 }
 
 
