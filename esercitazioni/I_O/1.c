@@ -15,6 +15,6 @@ int main(void){
 		c=getc(lettura);
 	}
 	printf("%d\n",s);
-	fprintf(scrittura,"la somma è %d\n",s);
+	fprintf(scrittura,"la somma è %dto\n",s);
 	fclose(lettura), fclose(scrittura);
 }

@@ -23,5 +23,4 @@ int main(void){
 	for (int i=0;i<a-1;i++){
 		printf("%lf ",vettore[i]);
 	}
-
 }
