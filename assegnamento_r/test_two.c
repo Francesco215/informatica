@@ -35,8 +35,14 @@ int main (void) {
       /* calcolo prossimo passo */
       /* modifica matrice */
       if ( step(&i,&j,NONE, mat,N,M) == -1 ) break;
+      printf("%d %d\n",i,j);
       /* altrimenti ho un elemento da riempire */
-      mat[i][j] = FULL;
+      if(mat[i][j]==FULL){
+        fprintf(stderr, "casella già occupata\n");
+        return EXIT_FAILURE;
+      }else{
+        mat[i][j]=FULL;
+      }
       /* stampa */
       system("clear");
       printf("Drop step %d di %d\n", k + 1, NSTEP);
