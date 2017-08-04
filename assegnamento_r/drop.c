@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <time.h>
 #include "myrand.h"
+#include <math.h>
+#include <string.h>
+#include <limits.h>
 
 /* protezione inclusioni multiple */
 #ifndef __DROP__H
@@ -88,46 +91,15 @@ void free_matrix (char*** pmat, unsigned n){
    \param mat puntatore alla matrice 
    \param n numero di righe della matrice
    \param m numero di colonne della matrice
-
-   \SPECIFICA 
-   il prossimo elemento da riempire viene calcolato simulando la caduta di una particella 
-   a partire dalla posizione P0 di coordinate ( 0, M/2 ),
-   ad ogni passo, se mi trovo nella posizione Pi = (i,j) considero l'insieme U delle celle non ancora piene fra la tre celle
-              (i+1,j-1) (i+1,j) (i+1,j-1)
-   e scelgo in modo equiprobabile fra le celle in U, ad esempio nel caso in cui le tre celle contengano rispettivamente
-              EMPTY EMPTY FULL
-   U = { (i+1,j-1), (i+1,j) }
-   e scelgo fra i due elementi di U con probabilità 1/2.
-
-   La caduta della particella si arresta quando di verifica uno dei due seguenti casi:
-   1) sono arrivato all'ultima riga (la N-1) (quindi mi sedimento sul fondo)
-   2) U e' vuoto
-   3) ho almeno una cella piena nell'intorno di (i,j) definito da dall'adiacenza "ad" ovvero
-      a) nessuno (NONE): in questo caso mi fermo solo se (i+1,j), (i+1,j-1) e (i+1,j+1) sono gia' piene (U e' vuoto)
-      b) croce (CROSS):
-                (i-1,j)
-     (i,j-1)     <i,j>    (i,j+1)
-                (i+1,j)  
-      c) diagonale (DIAGONAL)
-     (i-1,j-1)            (i-1,j+1)
-                 <i,j>    
-     (i+1,j-1)            (i+1,j+1)
-     d) croce e diagonale insieme (BOTH)
-     (i-1,j-1)   (i-1,j)        (i-1,j+1)
-      (i,j-1)     <i,j>          (i,j+1)
-     (i+1,j-1)   (i+1,j)        (i+1,j+1)
-
-   In tutti i casi --> restituisco in *next_i 
-   il valore di i e in *next_j il valore di j
-
    \retval 0 se le coordinate sono state calcolate correttamente
    \retval -1 se il punto di caduta iniziale P0
     al centro della prima riga è già FULL  
     in questo caso non viene modificato il valore di *next_i *next_j
 
 */
-static int a=0,c=0; 
-int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
+
+int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){ 
+  static int a=0,c=0;
   //cose da fare quando cade il primo fiocco
   if(c==0) srand(time(NULL));
   c=1;
@@ -140,12 +112,11 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
   //gestione parametri invalidi
   if(mat==NULL||n<=0||m<=0){
     fprintf(stderr,"parametri non validi\n");
-    return -1;
+    return EXIT_FAILURE;
   }
   //entrata bloccata
   if(mat[0][m/2]==FULL) return -1;
-  //calcolo passi
-  printf("%d\n",*next_i);
+  //ho toccato il fondo del barile
   if(*next_i==n-1) return 0;
 
   //controllo[0] vale 1 se ci sono elementi lungo la croce, altrimenti 0
@@ -158,7 +129,7 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
     if(ad==DIAGONAL && controllo[1]==1) return 0;
     if(ad==BOTH && (controllo[0]==1 || controllo[1]==1)) return 0;
     if(ad==NONE && mat[(*next_i)+1][(*next_j)+1]==FULL && mat[(*next_i)+1][*next_j]==FULL && mat[(*next_i)+1][(*next_j)-1]==FULL) return 0;
-  }else{
+  }else{//l'ho dovuto fare senò va in segmentation
     if(mat[(*next_i)+1][*next_j]==FULL || mat[*next_i][(*next_j)+1]==FULL || mat[*next_i][(*next_j)-1]==FULL) controllo[0]=1;
     if(mat[(*next_i)+1][(*next_j)+1]==FULL || mat[(*next_i)+1][(*next_j)-1]==FULL) controllo[1]=1;
     if(ad==CROSS && controllo[0]==1) return 0;
@@ -186,6 +157,7 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
       j++;
     }
   }
+  //faccio il passettino
   *next_j=asd[rand()%len];
   (*next_i)++;
   //ricorsione
@@ -196,19 +168,45 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
 
 
 /** legge la rappresentazione di un ostacolo come stringa di 4 estremi interi 
-    (es. "0 0 3 4" rapresenta i due estremi (0,0) superiore sinistro e (3,4) inferiore destro)
-    e crea sullo heap la corrispondente struttura obstacle_t 
-    controllando anche che le due coordinate siano consistenti ovvero detta (si,sj) la coordinata in alto a sinistra e (di,dj) 
-    quella in basso a destra deve essere vero che
-    si <= di && sj <= dj 
-
+    
     \param s la stringa contenente gli estremi (es. "0 0 3 4")
 
     \retval p il puntatore alla nuova struttura obstacle_t creata (se la conversione ha avuto successo)
     \retval NULL altrimenti
 */
-obstacle_t * string_to_obstacle (char * s){
 
+obstacle_t * string_to_obstacle (char * s){
+  if(s==NULL){
+    fprintf(stderr,"argomento invalido\n");
+    return EXIT_FAILURE;
+  }
+  unsigned pos[4];
+  char *segno2,*segno1;
+  for(int j=0;j<4;j++){
+    if(j==0) segno1=s;
+    if(j!=3) segno2=strchr(segno1,' ');
+    else segno2=strchr(s,'\0');
+    int len=segno2-segno1;
+    int n=0;
+    for(int i=0;i<len;i++){
+      n=n+(*(segno1+i)-'0')*pow(10,len-i-1);
+    }
+    pos[j]=n;
+    segno1=segno2+1;
+  }
+  if(pos[0]<=pos[2] && pos[1]<=pos[3]){
+    obstacle_t *rettangolo;
+    if((rettangolo=(obstacle_t *)malloc(sizeof(obstacle_t)))==NULL){
+      fprintf(stderr,"malloc torna null\n");
+      return EXIT_FAILURE;
+    }  
+    rettangolo->s_i=pos[0];
+    rettangolo->s_j=pos[1];
+    rettangolo->d_i=pos[2];
+    rettangolo->d_j=pos[3];
+    return rettangolo;
+  } 
+  return NULL;
 }
 
 /** crea la rappresentazione di un ostacolo come stringa con i 4 estremi (es. "0 0 3 4" rapresenta i due estremi (0,0) superiore sinistro e (3,4) inferiore destro)
@@ -219,7 +217,25 @@ obstacle_t * string_to_obstacle (char * s){
     \retval s il puntatore al primo carattere della stringa (se la conversione ha avuto successo)
     \retval NULL altrimenti
 */
-char * obstacle_to_string (obstacle_t * po, char* s, int n);
+char * obstacle_to_string (obstacle_t * po, char* s, int n){
+  int pos[4];
+  pos[0]=po->s_i;
+  pos[1]=po->s_j;
+  pos[2]=po->d_i;
+  pos[3]=po->d_j;
+  int d=0;
+  for(int i=0;i<4;i++){
+    for(int j=0;j<=log10(pos[i]);j++){
+      if(fmod(pos[i],pow(10,j))==pos[i]) d=d+j;
+    }
+  }
+  if((s=(char *)malloc((d+5)*sizeof(char)))==NULL){
+    printf("si salvi chi può!\n");
+    return EXIT_FAILURE;
+  }
+  for(int i=0;i<4;i++) fprintf(s,"%d ",pos[i]);
+  printf("%s\n",s);
+}
 
 /** inserisce nella matrice di caduta l'ostacolo s marcando gli elementi corrispondenti all'ostacolo con OBSTACLE 
   \param s puntatore all'ostacolo da inserire
@@ -230,7 +246,9 @@ char * obstacle_to_string (obstacle_t * po, char* s, int n);
   \retval 0 se tutto è andato bene
   \retval -1 se l'ostacolo è incompatibile con l'area di caduta (es. le coordinate sono maggiori del numero di righe/colonne)
 */
-int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m);
+int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m){
+  return 0;
+}
 
 /** inserisce un ostacolo nella lista mantenendo l'ordinamento crescente 
   \param p l'ostacolo da inserire (viene inserito direttamente senza effettuare copie)
