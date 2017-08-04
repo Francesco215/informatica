@@ -128,8 +128,10 @@ void free_matrix (char*** pmat, unsigned n){
 */
 static int a=0,c=0; 
 int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
+  //cose da fare quando cade il primo fiocco
   if(c==0) srand(time(NULL));
   c=1;
+  //cose da fare quando inizia a cadere un fiocco
   if(a==0){
     *next_i=0;
     *next_j=m/2;
@@ -143,17 +145,28 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
   //entrata bloccata
   if(mat[0][m/2]==FULL) return -1;
   //calcolo passi
-  (*next_i)++;
+  printf("%d\n",*next_i);
   if(*next_i==n-1) return 0;
 
   //controllo[0] vale 1 se ci sono elementi lungo la croce, altrimenti 0
   //controllo[1] vale 1 se ci sono elementi lungo la diagonale, altrimenti 0
   int controllo[2]={0,0};
-  if(mat[(*next_i)+1][*next_j]==FULL || mat[(*next_i)-1][*next_j]==FULL || mat[*next_i][(*next_j)+1]==FULL || mat[*next_i][(*next_j)-1]==FULL) controllo[0]=1;
-  if(mat[(*next_i)+1][(*next_j)+1]==FULL || mat[(*next_i)-1][(*next_j)-1]==FULL || mat[(*next_i)-1][(*next_j)+1]==FULL || mat[(*next_i)+1][(*next_j)-1]==FULL) controllo[1]=1;
-  if(ad==CROSS && controllo[0]==1) return 0;
-  if(ad==DIAGONAL && controllo[1]==1) return 0;
-  if(ad==BOTH && (controllo[0]==1 || controllo[1]==1)) return 0;
+  if(*next_i!=0){
+    if(mat[(*next_i)+1][*next_j]==FULL || mat[(*next_i)-1][*next_j]==FULL || mat[*next_i][(*next_j)+1]==FULL || mat[*next_i][(*next_j)-1]==FULL) controllo[0]=1;
+    if(mat[(*next_i)+1][(*next_j)+1]==FULL || mat[(*next_i)-1][(*next_j)-1]==FULL || mat[(*next_i)-1][(*next_j)+1]==FULL || mat[(*next_i)+1][(*next_j)-1]==FULL) controllo[1]=1;
+    if(ad==CROSS && controllo[0]==1) return 0;
+    if(ad==DIAGONAL && controllo[1]==1) return 0;
+    if(ad==BOTH && (controllo[0]==1 || controllo[1]==1)) return 0;
+    if(ad==NONE && mat[(*next_i)+1][(*next_j)+1]==FULL && mat[(*next_i)+1][*next_j]==FULL && mat[(*next_i)+1][(*next_j)-1]==FULL) return 0;
+  }else{
+    if(mat[(*next_i)+1][*next_j]==FULL || mat[*next_i][(*next_j)+1]==FULL || mat[*next_i][(*next_j)-1]==FULL) controllo[0]=1;
+    if(mat[(*next_i)+1][(*next_j)+1]==FULL || mat[(*next_i)+1][(*next_j)-1]==FULL) controllo[1]=1;
+    if(ad==CROSS && controllo[0]==1) return 0;
+    if(ad==DIAGONAL && controllo[1]==1) return 0;
+    if(ad==BOTH && (controllo[0]==1 || controllo[1]==1)) return 0;
+    if(ad==NONE && mat[(*next_i)+1][(*next_j)+1]==FULL && mat[(*next_i)+1][*next_j]==FULL && mat[(*next_i)+1][(*next_j)-1]==FULL) return 0;
+  }
+
   //ysnp è un vettore che indica le posizioni libere
   if(*next_i>n-3) printf("%d %d\n",*next_i,*next_j);
   int ysnp[3]={1,1,1};
@@ -161,6 +174,7 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
   if(*next_j==m-1 || mat[(*next_i)+1][(*next_j)+1]==FULL) ysnp[2]=0;
   if(mat[(*next_i)+1][*next_j]==FULL) ysnp[1]=0;
   int len=ysnp[0]+ysnp[1]+ysnp[2];
+
   //asd è un vettore con tutti gli esiti possibili per *next_j
   int asd[len];
   int j=0;
@@ -172,11 +186,11 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
       j++;
     }
   }
-  if(len==0){/*lascia il lavoro sporco a NONE*/}
-  else *next_j=asd[rand()%len];
-  //calcolo quando fermarmi
-  if(ad==NONE && mat[(*next_i)+1][(*next_j)+1]==FULL && mat[(*next_i)+1][*next_j]==FULL && mat[(*next_i)+1][(*next_j)-1]==FULL) return 0;
+  *next_j=asd[rand()%len];
+  (*next_i)++;
+  //ricorsione
   if(step(next_i,next_j,ad,mat,n,m)==0) return 0,a=0;
+  else return -1,a=0;
 }
 
 
@@ -193,7 +207,9 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
     \retval p il puntatore alla nuova struttura obstacle_t creata (se la conversione ha avuto successo)
     \retval NULL altrimenti
 */
-obstacle_t * string_to_obstacle (char * s);
+obstacle_t * string_to_obstacle (char * s){
+
+}
 
 /** crea la rappresentazione di un ostacolo come stringa con i 4 estremi (es. "0 0 3 4" rapresenta i due estremi (0,0) superiore sinistro e (3,4) inferiore destro)
     \param po puntatore all'ostacolo 
