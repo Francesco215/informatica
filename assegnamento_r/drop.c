@@ -10,7 +10,7 @@
 #include "myrand.h"
 #include <math.h>
 #include <string.h>
-#include <limits.h>
+
 
 /* protezione inclusioni multiple */
 #ifndef __DROP__H
@@ -218,23 +218,10 @@ obstacle_t * string_to_obstacle (char * s){
     \retval NULL altrimenti
 */
 char * obstacle_to_string (obstacle_t * po, char* s, int n){
-  int pos[4];
-  pos[0]=po->s_i;
-  pos[1]=po->s_j;
-  pos[2]=po->d_i;
-  pos[3]=po->d_j;
-  int d=0;
-  for(int i=0;i<4;i++){
-    for(int j=0;j<=log10(pos[i]);j++){
-      if(fmod(pos[i],pow(10,j))==pos[i]) d=d+j;
-    }
-  }
-  if((s=(char *)malloc((d+5)*sizeof(char)))==NULL){
-    printf("si salvi chi può!\n");
-    return EXIT_FAILURE;
-  }
-  for(int i=0;i<4;i++) fprintf(s,"%d ",pos[i]);
+  sprintf(s, "%d %d %d %d",po->s_i,po->s_j,po->d_i,po->d_j);
   printf("%s\n",s);
+  return s;
+
 }
 
 /** inserisce nella matrice di caduta l'ostacolo s marcando gli elementi corrispondenti all'ostacolo con OBSTACLE 
@@ -247,9 +234,14 @@ char * obstacle_to_string (obstacle_t * po, char* s, int n){
   \retval -1 se l'ostacolo è incompatibile con l'area di caduta (es. le coordinate sono maggiori del numero di righe/colonne)
 */
 int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m){
-  return 0;
+  if((s->d_i)<n && (s->s_i)<=(s->d_i) && (s->d_j)<m && (s->s_j)<=(s->d_j)){
+    for(int i=(s->s_i);i<=(s->d_i);i++){
+      for(int j=(s->s_j);j<=(s->d_j);j++) mat[i][j]=OBSTACLE;
+    }
+    return 0;
+  }
+  return -1;
 }
-
 /** inserisce un ostacolo nella lista mantenendo l'ordinamento crescente 
   \param p l'ostacolo da inserire (viene inserito direttamente senza effettuare copie)
   \param l il puntatore alla testa della lista
