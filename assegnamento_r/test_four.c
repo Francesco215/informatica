@@ -64,24 +64,24 @@ int main (void) {
   /*conversione ostacoli e inserimento in lista */
   for (i=0; obst1[i]!=NULL;i++) {
   	p = string_to_obstacle(obst1[i]);
-
   	if ( p == NULL || obstacle_to_string(p,s,K) == NULL )  {
-       		fprintf(stderr,"test 4.1.1 --> fallito!\n");
-       		return EXIT_FAILURE;
-  	}
+   		fprintf(stderr,"test 4.1.1 --> fallito!\n");
+   		return EXIT_FAILURE;
+    }
 
   	/* sono uguali ? */
   	if ( strcmp(obst1[i],s) != 0 ) {
-       		fprintf(stderr,"test 4.1.2 --> fallito!\n");
-       		return EXIT_FAILURE;
+  		fprintf(stderr,"test 4.1.2 --> fallito!\n");
+   		return EXIT_FAILURE;
   	}
-        fprintf(stdout, "%s = %s\n", obst1[i], s);
-        
-	lista = put_obstacle_in_list(p,lista);
-   }
-   fprintf(stdout,"Lista ordinata: \n");
-   fprint_list(stdout,lista);
-   free_list(&lista);
+    fprintf(stdout, "%s = %s\n", obst1[i], s);   
+  	lista = put_obstacle_in_list(p,lista);
+  }
+  fprintf(stdout,"Lista ordinata: \n");
+  int a=lista->pobj->s_i;
+  printf("%d\n",a);
+  fprint_list(stdout,lista);
+  free_list(&lista);
    
 
 
@@ -106,21 +106,20 @@ int main (void) {
         
 	lista = put_obstacle_in_list(p,lista);
    }
-
   f = fopen(FILE1,"w");
   if ( f == NULL ) {
     fprintf(stderr,"test 4.2.3 --> fallito!\n");
     return EXIT_FAILURE;
   }
 
-
    fprint_list(f,lista);
   
    mat = new_matrix(N,M);
    init_matrix(mat,N,M);
-   
+
    for(plist = lista; plist != NULL; plist = plist->next)
      put_obstacle_in_matrix(plist->pobj,mat,N,M);
+
 
    fprint_matrix(f,mat,N,M);
    free_list(&lista);

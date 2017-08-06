@@ -169,6 +169,7 @@ char * obstacle_to_string (obstacle_t * po, char* s, int n);
   \retval 0 se tutto è andato bene
   \retval -1 se l'ostacolo è incompatibile con l'area di caduta (es. le coordinate sono maggiori del numero di righe/colonne)
 */
+
 int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m);
 
 /** inserisce un ostacolo nella lista mantenendo l'ordinamento crescente 
@@ -178,6 +179,7 @@ int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m);
   \retval l il puntatore alla nuova testa della lista (dopo l'inserimento)
 
 */
+
 lista_t * put_obstacle_in_list (obstacle_t* p,lista_t* l);
 
 /** libera la memoria occupata dalla lista mettendo a NULL il puntatore alla lista 

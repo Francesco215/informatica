@@ -51,6 +51,33 @@ typedef struct list  {
   struct list * next; /* puntatore al prossimo elemento della lista */
 } lista_t;
 
+/** (FORNITA DAI DOCENTI)
+    alloca una nuova matrice che rappresenta l'area di caduta utilizzando 
+    la rappresentazione con array di puntatori a righe
+    (senza inizializzarla) 
+   
+   \param n numero di righe
+   \param m numero di colonne
+
+   \retval NULL se si e' verificato un errore (setta errno)
+   \retval p il puntatore alla matrice allocata
+*/
+char ** new_matrix (unsigned n, unsigned m);
+
+/** (FORNITA DAI DOCENTI) 
+   stampa la matrice mat sul file "f" (gia' aperto) usando 
+   -- il carattere '.' (EMPTY) per le posizioni vuote
+   -- il carattere '*' (FULL) per le posizioni piene 
+   -- il carattere '@' (OBJECT) per le posizioni occupate dagli ostacoli
+(i caratteri utilizzati nelle macro che li definiscono)
+
+   \param f il file in cui stampare (gia' aperto in scrittura)
+   \param mat il puntatore alla matrice
+   \param n numero di righe
+   \param n numero di colonne
+*/
+void fprint_matrix (FILE* f, char** mat, unsigned n, unsigned m);
+
 /** inizializza la matrice mat settando tutti i valori a EMPTY
    
    \param mat puntatore alla matrice 
@@ -139,7 +166,6 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
   }
 
   //ysnp è un vettore che indica le posizioni libere
-  if(*next_i>n-3) printf("%d %d\n",*next_i,*next_j);
   int ysnp[3]={1,1,1};
   if(*next_j==0 || mat[(*next_i)+1][(*next_j)-1]==FULL) ysnp[0]=0;
   if(*next_j==m-1 || mat[(*next_i)+1][(*next_j)+1]==FULL) ysnp[2]=0;
@@ -217,9 +243,8 @@ obstacle_t * string_to_obstacle (char * s){
     \retval s il puntatore al primo carattere della stringa (se la conversione ha avuto successo)
     \retval NULL altrimenti
 */
-char * obstacle_to_string (obstacle_t * po, char* s, int n){
+char * obstacle_to_string (obstacle_t * po, char* s, int n){ //mettere controllo errori
   sprintf(s, "%d %d %d %d",po->s_i,po->s_j,po->d_i,po->d_j);
-  printf("%s\n",s);
   return s;
 
 }
@@ -242,6 +267,18 @@ int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m){
   }
   return -1;
 }
+
+/** Lista degli ostacoli, sempre ordinata in senso crescente. L'ordinamento 
+e' definito come segue:
+[(s_i,s_j),(d_i,d_j)]
+L'ostacolo [(x1,y1),(t1,q1)] precede [(x2,y2),(t2,q2)] se vale che
+se x1!= x2 e x1 < x2 oppure
+se x1 == x2 e y1!= y2 e y1 < y2 oppure
+se x1 == x2 e y1 == y2 e t1!= t2 e t1 < t2 oppure
+se x1 == x2 e y1 == y2 e t1 == t2 e q1!= q2 e q1 < q2
+*/
+
+
 /** inserisce un ostacolo nella lista mantenendo l'ordinamento crescente 
   \param p l'ostacolo da inserire (viene inserito direttamente senza effettuare copie)
   \param l il puntatore alla testa della lista
@@ -249,12 +286,73 @@ int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m){
   \retval l il puntatore alla nuova testa della lista (dopo l'inserimento)
 
 */
-lista_t * put_obstacle_in_list (obstacle_t* p,lista_t* l);
+
+
+lista_t * put_obstacle_in_list (obstacle_t* p,lista_t* l){
+  static lista_t *m;
+  m=l;
+  //confronta p e l->pobj per vedere qual'è più grosso
+  short comp=0;
+
+  unsigned pos[2][4];
+  if(l!=NULL){
+    pos[0][0]=p->s_i,pos[1][0]=(l->pobj)->s_i;
+    pos[0][1]=p->s_j,pos[1][1]=(l->pobj)->s_j;
+    pos[0][2]=p->d_i,pos[1][2]=(l->pobj)->d_i;
+    pos[0][3]=p->d_j,pos[1][3]=(l->pobj)->d_j;
+    for(int i=0;i<4;i++){
+      if(pos[0][i]>pos[1][i]) comp=1;
+      if(pos[0][i]<pos[1][i]) comp=-1;
+      if(comp!=0) break;
+    }
+  }
+  printf("%d\n",comp);
+  //se l'ostacolo è già nella lista o è nullo, non fare niente
+  if(p==NULL) return l;
+  if(comp==0 && l!=NULL) return l;
+
+  //se l'ostacolo è più piccolo dell'elemento della lista
+  if(comp==-1){
+    //ripeto l'operazione col prossimo elemento
+
+    put_obstacle_in_list(p,l->next);
+    printf("aaaaa %d\n",l->pobj->s_i);
+  }
+
+  //se l'ostacolo è più grade di un elemento della lista, o se è alla fine
+  if(comp==1 || l==NULL){
+    //inizializzo l'elemento della lista e lo alloco
+    lista_t *elemento=(lista_t *)malloc(sizeof(lista_t));
+    if(elemento==NULL){
+      fprintf(stderr, "fatal error\n");
+      return EXIT_FAILURE;
+    }
+    //assegno a pobj dell'elemento della lista p
+    elemento->pobj=p;
+    //se non si trova alla fine 
+    if(l!=NULL){
+      elemento->next=l->next;  
+      l->next=elemento;
+    }
+    //se si trova alla fine
+    if(l==NULL){
+      elemento->next=NULL;
+      l=elemento;
+    }
+  }
+  if(m==l){
+    printf("%d\n",l->pobj->s_i);
+    return l;
+  }
+}
 
 /** libera la memoria occupata dalla lista mettendo a NULL il puntatore alla lista 
    \param plist puntatore al puntatore della lista da deallocare
 */
-void free_list (lista_t ** plist);
+void free_list (lista_t ** plist){
+  if(*plist!=NULL) free_list((*plist)->next);
+  free(plist);
+}
 
 /** stampa la lista degli ostacoli su file (FORNITA DAI DOCENTI)
   \param f file da utilizzare
