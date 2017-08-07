@@ -150,26 +150,22 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
   //controllo[1] vale 1 se ci sono elementi lungo la diagonale, altrimenti 0
   int controllo[2]={0,0};
   if(*next_i!=0){
-    if(mat[(*next_i)+1][*next_j]==FULL || mat[(*next_i)-1][*next_j]==FULL || mat[*next_i][(*next_j)+1]==FULL || mat[*next_i][(*next_j)-1]==FULL) controllo[0]=1;
-    if(mat[(*next_i)+1][(*next_j)+1]==FULL || mat[(*next_i)-1][(*next_j)-1]==FULL || mat[(*next_i)-1][(*next_j)+1]==FULL || mat[(*next_i)+1][(*next_j)-1]==FULL) controllo[1]=1;
-    if(ad==CROSS && controllo[0]==1) return 0;
-    if(ad==DIAGONAL && controllo[1]==1) return 0;
-    if(ad==BOTH && (controllo[0]==1 || controllo[1]==1)) return 0;
-    if(ad==NONE && mat[(*next_i)+1][(*next_j)+1]==FULL && mat[(*next_i)+1][*next_j]==FULL && mat[(*next_i)+1][(*next_j)-1]==FULL) return 0;
+    if(mat[(*next_i)+1][*next_j]!=EMPTY || mat[(*next_i)-1][*next_j]!=EMPTY || mat[*next_i][(*next_j)+1]!=EMPTY || mat[*next_i][(*next_j)-1]!=EMPTY) controllo[0]=1;
+    if(mat[(*next_i)+1][(*next_j)+1]!=EMPTY || mat[(*next_i)-1][(*next_j)-1]!=EMPTY || mat[(*next_i)-1][(*next_j)+1]!=EMPTY || mat[(*next_i)+1][(*next_j)-1]!=EMPTY) controllo[1]=1;
   }else{//l'ho dovuto fare senò va in segmentation
-    if(mat[(*next_i)+1][*next_j]==FULL || mat[*next_i][(*next_j)+1]==FULL || mat[*next_i][(*next_j)-1]==FULL) controllo[0]=1;
-    if(mat[(*next_i)+1][(*next_j)+1]==FULL || mat[(*next_i)+1][(*next_j)-1]==FULL) controllo[1]=1;
-    if(ad==CROSS && controllo[0]==1) return 0;
-    if(ad==DIAGONAL && controllo[1]==1) return 0;
-    if(ad==BOTH && (controllo[0]==1 || controllo[1]==1)) return 0;
-    if(ad==NONE && mat[(*next_i)+1][(*next_j)+1]==FULL && mat[(*next_i)+1][*next_j]==FULL && mat[(*next_i)+1][(*next_j)-1]==FULL) return 0;
+    if(mat[(*next_i)+1][*next_j]!=EMPTY || mat[*next_i][(*next_j)+1]!=EMPTY || mat[*next_i][(*next_j)-1]!=EMPTY) controllo[0]=1;
+    if(mat[(*next_i)+1][(*next_j)+1]!=EMPTY || mat[(*next_i)+1][(*next_j)-1]!=EMPTY) controllo[1]=1;
   }
+  if(ad==CROSS && controllo[0]==1) return 0;
+  if(ad==DIAGONAL && controllo[1]==1) return 0;
+  if(ad==BOTH && (controllo[0]==1 || controllo[1]==1)) return 0;
+  if(ad==NONE && mat[(*next_i)+1][(*next_j)+1]!=EMPTY && mat[(*next_i)+1][*next_j]!=EMPTY && mat[(*next_i)+1][(*next_j)-1]!=EMPTY) return 0;
 
   //ysnp è un vettore che indica le posizioni libere
   int ysnp[3]={1,1,1};
-  if(*next_j==0 || mat[(*next_i)+1][(*next_j)-1]==FULL) ysnp[0]=0;
-  if(*next_j==m-1 || mat[(*next_i)+1][(*next_j)+1]==FULL) ysnp[2]=0;
-  if(mat[(*next_i)+1][*next_j]==FULL) ysnp[1]=0;
+  if(*next_j==0 || mat[(*next_i)+1][(*next_j)-1]!=EMPTY) ysnp[0]=0;
+  if(*next_j==m-1 || mat[(*next_i)+1][(*next_j)+1]!=EMPTY) ysnp[2]=0;
+  if(mat[(*next_i)+1][*next_j]!=EMPTY) ysnp[1]=0;
   int len=ysnp[0]+ysnp[1]+ysnp[2];
 
   //asd è un vettore con tutti gli esiti possibili per *next_j
@@ -268,23 +264,11 @@ int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m){
   return -1;
 }
 
-/** Lista degli ostacoli, sempre ordinata in senso crescente. L'ordinamento 
-e' definito come segue:
-[(s_i,s_j),(d_i,d_j)]
-L'ostacolo [(x1,y1),(t1,q1)] precede [(x2,y2),(t2,q2)] se vale che
-se x1!= x2 e x1 < x2 oppure
-se x1 == x2 e y1!= y2 e y1 < y2 oppure
-se x1 == x2 e y1 == y2 e t1!= t2 e t1 < t2 oppure
-se x1 == x2 e y1 == y2 e t1 == t2 e q1!= q2 e q1 < q2
-*/
-
-
 /** inserisce un ostacolo nella lista mantenendo l'ordinamento crescente 
   \param p l'ostacolo da inserire (viene inserito direttamente senza effettuare copie)
   \param l il puntatore alla testa della lista
 
   \retval l il puntatore alla nuova testa della lista (dopo l'inserimento)
-
 */
 
 lista_t * put_obstacle_in_list (obstacle_t* p,lista_t* l){
@@ -293,7 +277,6 @@ lista_t * put_obstacle_in_list (obstacle_t* p,lista_t* l){
 /*questo blocco che inizia qua e finisce alla riga 313 serve per determinare se un ostacolo
 è "maggiore" o "minore" di un altro, restiruisce comp=1 se p>l->pobj o se l==NULL,
 comp=-1 se p<l->pobj e comp=0 se p==l->pobj
-e comunque funziona, quindi non ti preccupare di questo
 */
   short comp=0;
   if(l!=NULL){
@@ -303,16 +286,15 @@ e comunque funziona, quindi non ti preccupare di questo
     pos[0][2]=p->d_i,pos[1][2]=(l->pobj)->d_i;
     pos[0][3]=p->d_j,pos[1][3]=(l->pobj)->d_j;
     for(int i=0;i<4;i++){
-      if(pos[0][i]>pos[1][i]) comp=1;
-      if(pos[0][i]<pos[1][i]) comp=-1;
+      if(pos[0][i]>pos[1][i]) comp=-1;
+      if(pos[0][i]<pos[1][i]) comp=1;
       if(comp!=0) break;
     }
     if(comp==0) return l;
-    printf("%d ",comp);
-  }else comp=1,printf("%d\n",1);
+  }else comp=1;
 
   // se p<l->pobj allora ripeti l'operazione col prossimo
-  if(comp==-1) put_obstacle_in_list(p,l->next);
+  if(comp==-1) l->next=put_obstacle_in_list(p,l->next);
   
   // quando arrivo alla fine, o quando incontro un'elemento più piccolo
   if(comp==1){    
@@ -333,17 +315,17 @@ e comunque funziona, quindi non ti preccupare di questo
       l->pobj=p;
     }
   }
-
  return l;
-  
 }
 
 /** libera la memoria occupata dalla lista mettendo a NULL il puntatore alla lista 
    \param plist puntatore al puntatore della lista da deallocare
 */
 void free_list (lista_t ** plist){
-  if(*plist!=NULL) free_list((*plist)->next);
-  free(plist);
+  if(*plist==NULL) return;
+  free_list(&(*plist)->next);
+  free(*plist);
+  *plist=NULL;
 }
 
 /** stampa la lista degli ostacoli su file (FORNITA DAI DOCENTI)

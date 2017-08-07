@@ -2,6 +2,7 @@
 #define __FILE__H
 
 #include <stdio.h>
+#include "drop.h"
 /** salva su file l'attuale matrice di simulazione secondo un formato compatto a scelta dello studente
     (deve essere descritto nella relazione) 
     \param mat puntatore alla matrice
@@ -13,7 +14,9 @@
     \retval -1 se si è verificato un errore
 
 */
-int save_to_file (char** mat, unsigned n, unsigned m, FILE* f);
+int save_to_file (char** mat, unsigned n, unsigned m, FILE* f){
+    fprint_matrix (f,mat,n,m);
+}
 
 /** legge da file la matrice di simulazione secondo il formato compatto a scelta dello studente
     (deve essere descritto nella relazione) e crea una nuova matrice 

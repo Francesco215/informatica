@@ -101,7 +101,6 @@ int main (void) {
        		return EXIT_FAILURE;
   	}
         fprintf(stdout, "%s = %s\n", obst2[i], s);
-        
 	lista = put_obstacle_in_list(p,lista);
    }
   f = fopen(FILE1,"w");
@@ -109,7 +108,6 @@ int main (void) {
     fprintf(stderr,"test 4.2.3 --> fallito!\n");
     return EXIT_FAILURE;
   }
-
    fprint_list(f,lista);
   
    mat = new_matrix(N,M);
@@ -123,6 +121,7 @@ int main (void) {
    free_list(&lista);
    free_matrix(&mat,N);
    fclose(f);
+         printf("a\n");
   return 0;
 
 }
