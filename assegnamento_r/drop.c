@@ -287,15 +287,17 @@ se x1 == x2 e y1 == y2 e t1 == t2 e q1!= q2 e q1 < q2
 
 */
 
-
 lista_t * put_obstacle_in_list (obstacle_t* p,lista_t* l){
-  static lista_t *m;
-  m=l;
-  //confronta p e l->pobj per vedere qual'è più grosso
-  short comp=0;
+  if(p==NULL) return l; //se il puntatore è nullo me lo levo dalle palle
 
-  unsigned pos[2][4];
+/*questo blocco che inizia qua e finisce alla riga 313 serve per determinare se un ostacolo
+è "maggiore" o "minore" di un altro, restiruisce comp=1 se p>l->pobj o se l==NULL,
+comp=-1 se p<l->pobj e comp=0 se p==l->pobj
+e comunque funziona, quindi non ti preccupare di questo
+*/
+  short comp=0;
   if(l!=NULL){
+    unsigned pos[2][4];
     pos[0][0]=p->s_i,pos[1][0]=(l->pobj)->s_i;
     pos[0][1]=p->s_j,pos[1][1]=(l->pobj)->s_j;
     pos[0][2]=p->d_i,pos[1][2]=(l->pobj)->d_i;
@@ -305,45 +307,35 @@ lista_t * put_obstacle_in_list (obstacle_t* p,lista_t* l){
       if(pos[0][i]<pos[1][i]) comp=-1;
       if(comp!=0) break;
     }
-  }
-  printf("%d\n",comp);
-  //se l'ostacolo è già nella lista o è nullo, non fare niente
-  if(p==NULL) return l;
-  if(comp==0 && l!=NULL) return l;
+    if(comp==0) return l;
+    printf("%d ",comp);
+  }else comp=1,printf("%d\n",1);
 
-  //se l'ostacolo è più piccolo dell'elemento della lista
-  if(comp==-1){
-    //ripeto l'operazione col prossimo elemento
-
-    put_obstacle_in_list(p,l->next);
-    printf("aaaaa %d\n",l->pobj->s_i);
-  }
-
-  //se l'ostacolo è più grade di un elemento della lista, o se è alla fine
-  if(comp==1 || l==NULL){
-    //inizializzo l'elemento della lista e lo alloco
-    lista_t *elemento=(lista_t *)malloc(sizeof(lista_t));
-    if(elemento==NULL){
-      fprintf(stderr, "fatal error\n");
-      return EXIT_FAILURE;
+  // se p<l->pobj allora ripeti l'operazione col prossimo
+  if(comp==-1) put_obstacle_in_list(p,l->next);
+  
+  // quando arrivo alla fine, o quando incontro un'elemento più piccolo
+  if(comp==1){    
+    if(l!=NULL){// se si trova nel mezzo  
+      lista_t *temp;
+      temp=l;
+      l=(lista_t *)malloc(sizeof(lista_t));
+      if(l==NULL){
+        fprintf(stderr, "fatal error\n");
+        return EXIT_FAILURE;
+      }    
+      l->pobj=p;
+      l->next=temp;  
     }
-    //assegno a pobj dell'elemento della lista p
-    elemento->pobj=p;
-    //se non si trova alla fine 
-    if(l!=NULL){
-      elemento->next=l->next;  
-      l->next=elemento;
-    }
-    //se si trova alla fine
-    if(l==NULL){
-      elemento->next=NULL;
-      l=elemento;
+    if(l==NULL){//se si trova alla fine o se è il primo elemento in assoluto
+      l=(lista_t *)malloc(sizeof(lista_t));
+      l->next=NULL;
+      l->pobj=p;
     }
   }
-  if(m==l){
-    printf("%d\n",l->pobj->s_i);
-    return l;
-  }
+
+ return l;
+  
 }
 
 /** libera la memoria occupata dalla lista mettendo a NULL il puntatore alla lista 

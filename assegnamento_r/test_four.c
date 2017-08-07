@@ -78,8 +78,6 @@ int main (void) {
   	lista = put_obstacle_in_list(p,lista);
   }
   fprintf(stdout,"Lista ordinata: \n");
-  int a=lista->pobj->s_i;
-  printf("%d\n",a);
   fprint_list(stdout,lista);
   free_list(&lista);
    
