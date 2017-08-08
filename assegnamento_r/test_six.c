@@ -133,7 +133,6 @@ int main (void) {
 
   /* legge da file e crea una nuova matrice mat2 */
    mat2 = read_from_file (&n,&m,f);
-   printf("%d %d \n",n,m);
    fclose (f);
    fprint_matrix(stdout,mat2,n,m);
 

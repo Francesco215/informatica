@@ -33,31 +33,34 @@ int save_to_file (char** mat, unsigned n, unsigned m, FILE* f){
 
 */
 char** read_from_file (unsigned * pn, unsigned* pm, FILE * f){
-  char s[50];
-  unsigned i;
-  printf("----- %c\n------",getc(f));
-  for(i=1;fgets(s,50,f)!=NULL;i++){
-    if(i==1) *pm=strlen(s);
-    fgets(s,50,f);
-    (*pn)=i;
+  int i,j;
+  char c='a';
+  //serve per vedere quant'è grossa la matrice
+  for(i=0;c!=EOF;i++){
+    j=0;
+    int k=0;
+    for(j=0;c!='\n'&&c!=EOF;i++){
+      c=getc(f);
+      if(k>*pm) *pm=k;
+      k++;
+      if(c=='\n') (*pn)++;
+    }
+    c=getc(f);
+    if(c==EOF) printf("a\n");
   }
 
+  //alloca la matrice e gli mette la roba
+  rewind(f);
   char** p=(char **)malloc(*pn * sizeof(char*));
-  for(int i=0;i<*pn;i++){
-    p[i]=(char* )malloc(*pm * sizeof(char));
-    fgets(s,50,f);
-    printf("%s\n",s);
-    for(int j=0;j<*pm;j++){
-      if(s[j]=='.') p[i][j]=EMPTY;
-      if(s[j]=='*') p[i][j]=FULL;
-      if(s[j]=='@') p[i][j]=OBSTACLE;
-    }
-  }
   for(i=0;i<*pn;i++){
-    for(int j=0;j<*pm;j++){
-      printf("%c",p[i][j]);
+    p[i]=(char* )malloc(*pm * sizeof(char));
+    for(j=0;j<*pm;j++){
+      c=getc(f);
+      if(c=='.') p[i][j]=EMPTY;
+      if(c=='*') p[i][j]=FULL;
+      if(c=='@') p[i][j]=OBSTACLE;
     }
-    printf("\n");
+    c=getc(f);
   }
   return p;
 
