@@ -59,7 +59,6 @@ int main (void) {
   /*leggere ostacoli da file e inserirli in lista ordinata*/
   /* aprire il file che contiene gli ostacoli in lettura */
   f = fopen(INFILE1,"r");
-
   if ( f == NULL ) {
        	fprintf(stderr,"test 5.1.1 --> fallito!\n");
        	return EXIT_FAILURE;
@@ -67,11 +66,13 @@ int main (void) {
 
   while (fgets(s,K,f) != NULL ) {
         p = string_to_obstacle(s);
+        printf("%s\n",s);
         /* scarta gli ostacoli mal formati */
 	if (p != NULL ) l = put_obstacle_in_list(p,l);
-        
+  /*char k[50];
+  obstacle_to_string(p,k,50);
+  printf("%s\n",k);*/
   }
- 
   fprint_list(stdout,l);
   fclose(f);
 

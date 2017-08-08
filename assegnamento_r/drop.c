@@ -198,16 +198,16 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
 */
 
 obstacle_t * string_to_obstacle (char * s){
-  if(s==NULL){
+  if(s==NULL){//nel caso l'argomento è invalido
     fprintf(stderr,"argomento invalido\n");
-    return EXIT_FAILURE;
+    return NULL;
   }
-  unsigned pos[4];
+  unsigned pos[4];//vettore coordinate ostacolo
   char *segno2,*segno1;
   for(int j=0;j<4;j++){
     if(j==0) segno1=s;
     if(j!=3) segno2=strchr(segno1,' ');
-    else segno2=strchr(s,'\0');
+    if(j==3) segno2=strchr(segno1,'\0');
     int len=segno2-segno1;
     int n=0;
     for(int i=0;i<len;i++){
@@ -303,7 +303,7 @@ comp=-1 se p<l->pobj e comp=0 se p==l->pobj
       temp=l;
       l=(lista_t *)malloc(sizeof(lista_t));
       if(l==NULL){
-        fprintf(stderr, "fatal error\n");
+        fprintf(stderr, "errore\n");
         return EXIT_FAILURE;
       }    
       l->pobj=p;

@@ -16,6 +16,8 @@
 */
 int save_to_file (char** mat, unsigned n, unsigned m, FILE* f){
     fprint_matrix (f,mat,n,m);
+    fclose(f);
+    return 0;
 }
 
 /** legge da file la matrice di simulazione secondo il formato compatto a scelta dello studente
@@ -29,5 +31,25 @@ int save_to_file (char** mat, unsigned n, unsigned m, FILE* f){
     \retval NULL se si è verificato un errore (in questo caso *pn e *pm non vengono modificati)
 
 */
-char** read_from_file (unsigned * pn, unsigned* pm, FILE * f);
+char** read_from_file (unsigned * pn, unsigned* pm, FILE * f){
+    char a=getchar();
+    int i,j;
+    for(i=0;a!=EOF;i++){
+        for(j=0;a!='\n' || a!=EOF;j++){
+            a=getchar();
+        }
+    }
+    a=getchar();
+    *pn=i,*pm=j;
+    printf("%d %d\n",i,j);
+    char mat[*pn][*pm];
+    for(int i=0;a!=EOF;i++){
+        for(int j=0;a!='\n' || a!=EOF;j++){
+            mat[i][j]=a;
+            a=getchar();
+        }
+    }
+
+
+}
 #endif
