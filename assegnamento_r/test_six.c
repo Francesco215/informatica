@@ -64,16 +64,14 @@ int main (void) {
        	return EXIT_FAILURE;
   }
 
-  while (fgets(s,K,f) != NULL ) {
+  for (int i=0;i<12;i++) {
+        fgets(s,K,f); 
         p = string_to_obstacle(s);
-        printf("%s\n",s);
         /* scarta gli ostacoli mal formati */
 	if (p != NULL ) l = put_obstacle_in_list(p,l);
-  /*char k[50];
-  obstacle_to_string(p,k,50);
-  printf("%s\n",k);*/
+   /* fprint_list(stdout,l);
+    printf("--------\n");*/
   }
-  fprint_list(stdout,l);
   fclose(f);
 
   /* Test 5.2 */
@@ -117,6 +115,7 @@ int main (void) {
   }
    /* scrittura su file della matrice mat */
    i = save_to_file(mat,N,M,f);
+
    if ( i != 0 ) {
        	fprintf(stderr,"test 5.3.2 --> fallito!\n");
        	return EXIT_FAILURE;
@@ -135,8 +134,9 @@ int main (void) {
   /* legge da file e crea una nuova matrice mat2 */
    mat2 = read_from_file (&n,&m,f);
    fclose (f);
+   fprint_matrix(stdout,mat2,n,m);
 
-  /* aprire il secondo file di output in scrittura */
+/* aprire il secondo file di output in scrittura */
    f = fopen(OUTFILE2,"w");
    if ( f == NULL ) {
        	fprintf(stderr,"test 5.3.4 --> fallito!\n");

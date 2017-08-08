@@ -202,19 +202,19 @@ obstacle_t * string_to_obstacle (char * s){
     fprintf(stderr,"argomento invalido\n");
     return NULL;
   }
-  unsigned pos[4];//vettore coordinate ostacolo
+  unsigned pos[4]={0,0,0,0};//vettore coordinate ostacolo
   char *segno2,*segno1;
   for(int j=0;j<4;j++){
     if(j==0) segno1=s;
     if(j!=3) segno2=strchr(segno1,' ');
-    if(j==3) segno2=strchr(segno1,'\0');
+    if(j==3) segno2=strchr(s,'\0')-1;
     int len=segno2-segno1;
     int n=0;
     for(int i=0;i<len;i++){
       n=n+(*(segno1+i)-'0')*pow(10,len-i-1);
     }
     pos[j]=n;
-    segno1=segno2+1;
+    if(j!=3) segno1=segno2+1;
   }
   if(pos[0]<=pos[2] && pos[1]<=pos[3]){
     obstacle_t *rettangolo;

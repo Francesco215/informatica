@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include "drop.h"
+#include <string.h>
+#include <stdlib.h>
 /** salva su file l'attuale matrice di simulazione secondo un formato compatto a scelta dello studente
     (deve essere descritto nella relazione) 
     \param mat puntatore alla matrice
@@ -32,24 +34,29 @@ int save_to_file (char** mat, unsigned n, unsigned m, FILE* f){
 
 */
 char** read_from_file (unsigned * pn, unsigned* pm, FILE * f){
-    char a=getchar();
-    int i,j;
-    for(i=0;a!=EOF;i++){
-        for(j=0;a!='\n' || a!=EOF;j++){
-            a=getchar();
-        }
-    }
-    a=getchar();
-    *pn=i,*pm=j;
-    printf("%d %d\n",i,j);
-    char mat[*pn][*pm];
-    for(int i=0;a!=EOF;i++){
-        for(int j=0;a!='\n' || a!=EOF;j++){
-            mat[i][j]=a;
-            a=getchar();
-        }
-    }
+  char s[50];
+  unsigned i;
+  for(i=1;fgets(s,50,f)!=NULL;i++){
+    if(i==1) *pm=strlen(s);
+    if(*pm!=strlen(s)){
+      fprintf(stderr,"righe di lunghezza diversa\n");
+      return NULL;}
+      fgets(s,50,f);
+      (*pn)=i;
+  }
 
+  char** p=(char **)malloc(*pn * sizeof(char*));
+  for(int i=0;i<*pn;i++){
+    p[i]=(char* )malloc(*pm * sizeof(char));
+    fgets(s,50,f);
+    printf("%s\n",s);
+    for(int j=0;j<*pm;j++){
+      if(s[j]=='.') p[i][j]=EMPTY;
+      if(s[j]=='*') p[i][j]=FULL;
+      if(s[j]=='@') p[i][j]=OBSTACLE;
+    }
+  }
+  return p;
 
 }
 #endif
