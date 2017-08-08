@@ -18,7 +18,6 @@
 */
 int save_to_file (char** mat, unsigned n, unsigned m, FILE* f){
     fprint_matrix (f,mat,n,m);
-    fclose(f);
     return 0;
 }
 
@@ -36,13 +35,11 @@ int save_to_file (char** mat, unsigned n, unsigned m, FILE* f){
 char** read_from_file (unsigned * pn, unsigned* pm, FILE * f){
   char s[50];
   unsigned i;
+  printf("----- %c\n------",getc(f));
   for(i=1;fgets(s,50,f)!=NULL;i++){
     if(i==1) *pm=strlen(s);
-    if(*pm!=strlen(s)){
-      fprintf(stderr,"righe di lunghezza diversa\n");
-      return NULL;}
-      fgets(s,50,f);
-      (*pn)=i;
+    fgets(s,50,f);
+    (*pn)=i;
   }
 
   char** p=(char **)malloc(*pn * sizeof(char*));
@@ -55,6 +52,12 @@ char** read_from_file (unsigned * pn, unsigned* pm, FILE * f){
       if(s[j]=='*') p[i][j]=FULL;
       if(s[j]=='@') p[i][j]=OBSTACLE;
     }
+  }
+  for(i=0;i<*pn;i++){
+    for(int j=0;j<*pm;j++){
+      printf("%c",p[i][j]);
+    }
+    printf("\n");
   }
   return p;
 
