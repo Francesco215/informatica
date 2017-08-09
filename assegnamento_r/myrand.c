@@ -19,7 +19,7 @@ int my_rand(void){
 	int M=2147483647;
 	int a=16807;
 	int max=10000;
-	lastnumber=(lastnumber*a)%M;
+	lastnumber=abs((lastnumber*a)%M);
 	return lastnumber%max;
 }
 #endif

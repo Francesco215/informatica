@@ -56,7 +56,7 @@ int main (void) {
   /*test su ostacoli ben formati */
   for (i=0; good[i]!=NULL;i++) {
   	p = string_to_obstacle(good[i]);
-
+    
   	if ( p == NULL || obstacle_to_string(p,s,K) == NULL )  {
        		fprintf(stderr,"test 3.1.1 --> fallito!\n");
        		return EXIT_FAILURE;

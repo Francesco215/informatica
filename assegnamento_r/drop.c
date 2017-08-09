@@ -128,7 +128,7 @@ void free_matrix (char*** pmat, unsigned n){
 int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){ 
   static int a=0,c=0;
   //cose da fare quando cade il primo fiocco
-  if(c==0) srand(time(NULL));
+  if(c==0) my_srand(time(NULL));
   c=1;
   //cose da fare quando inizia a cadere un fiocco
   if(a==0){
@@ -180,7 +180,7 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
     }
   }
   //faccio il passettino
-  *next_j=asd[rand()%len];
+  *next_j=asd[my_rand()%len];
   (*next_i)++;
   //ricorsione
   if(step(next_i,next_j,ad,mat,n,m)==0) return 0,a=0;
@@ -205,15 +205,18 @@ obstacle_t * string_to_obstacle (char * s){
   unsigned pos[4]={0,0,0,0};//vettore coordinate ostacolo
   char *segno2,*segno1;
   for(int j=0;j<4;j++){
+    char c;
     if(j==0) segno1=s;
     if(j!=3) segno2=strchr(segno1,' ');
-    if(j==3) segno2=strchr(s,'\0')-1;
+    if(j==3 && strchr(s,'\n')==NULL) segno2=strchr(s,'\0');
+    if(j==3 && strchr(s,'\n')!=NULL) segno2=strchr(s,'\n');
     int len=segno2-segno1;
     int n=0;
     for(int i=0;i<len;i++){
       n=n+(*(segno1+i)-'0')*pow(10,len-i-1);
     }
     pos[j]=n;
+    printf("%d\n",n);
     if(j!=3) segno1=segno2+1;
   }
   if(pos[0]<=pos[2] && pos[1]<=pos[3]){
@@ -228,6 +231,7 @@ obstacle_t * string_to_obstacle (char * s){
     rettangolo->d_j=pos[3];
     return rettangolo;
   } 
+
   return NULL;
 }
 

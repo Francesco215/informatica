@@ -46,7 +46,6 @@ char** read_from_file (unsigned * pn, unsigned* pm, FILE * f){
       if(c=='\n') (*pn)++;
     }
     c=getc(f);
-    if(c==EOF) printf("a\n");
   }
 
   //alloca la matrice e gli mette la roba
