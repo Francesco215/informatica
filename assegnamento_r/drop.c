@@ -86,6 +86,7 @@ void fprint_matrix (FILE* f, char** mat, unsigned n, unsigned m);
 */
 
 void init_matrix (char** mat, unsigned n, unsigned m){
+  if(mat==NULL) printf("aaaa\n");
   if(mat==NULL||n==0||m==0){
     fprintf(stderr,"matrice malformata\n");
     mat=NULL;
@@ -215,8 +216,8 @@ obstacle_t * string_to_obstacle (char * s){
     for(int i=0;i<len;i++){
       n=n+(*(segno1+i)-'0')*pow(10,len-i-1);
     }
+    if(j<3 && segno2==strchr(s,'\n')) return NULL;
     pos[j]=n;
-    printf("%d\n",n);
     if(j!=3) segno1=segno2+1;
   }
   if(pos[0]<=pos[2] && pos[1]<=pos[3]){
@@ -259,6 +260,7 @@ char * obstacle_to_string (obstacle_t * po, char* s, int n){ //mettere controllo
   \retval -1 se l'ostacolo è incompatibile con l'area di caduta (es. le coordinate sono maggiori del numero di righe/colonne)
 */
 int put_obstacle_in_matrix (obstacle_t * s,char ** mat, unsigned n, unsigned m){
+  if(s==NULL) return -1;
   if((s->d_i)<n && (s->s_i)<=(s->d_i) && (s->d_j)<m && (s->s_j)<=(s->d_j)){
     for(int i=(s->s_i);i<=(s->d_i);i++){
       for(int j=(s->s_j);j<=(s->d_j);j++) mat[i][j]=OBSTACLE;
