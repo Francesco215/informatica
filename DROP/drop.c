@@ -1,9 +1,7 @@
-/* 
-\file
-  \authors informatica (CDS Fisica) 2016/17
-  \brief progetto di recupero: intestazione delle funzioni da implementare
- */
-
+/*
+Sacco Francesco, matricola numero 548956
+dichiaro che il seguente codice è in ogni sua parte opera mia
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -86,7 +84,7 @@ void fprint_matrix (FILE* f, char** mat, unsigned n, unsigned m);
 */
 
 void init_matrix (char** mat, unsigned n, unsigned m){
-  if(mat==NULL) printf("aaaa\n");
+  if(mat==NULL)
   if(mat==NULL||n==0||m==0){
     fprintf(stderr,"matrice malformata\n");
     mat=NULL;
@@ -157,6 +155,7 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
     if(mat[(*next_i)+1][*next_j]!=EMPTY || mat[*next_i][(*next_j)+1]!=EMPTY || mat[*next_i][(*next_j)-1]!=EMPTY) controllo[0]=1;
     if(mat[(*next_i)+1][(*next_j)+1]!=EMPTY || mat[(*next_i)+1][(*next_j)-1]!=EMPTY) controllo[1]=1;
   }
+  //faccio appiccicare il fiocco
   if(ad==CROSS && controllo[0]==1) return 0;
   if(ad==DIAGONAL && controllo[1]==1) return 0;
   if(ad==BOTH && (controllo[0]==1 || controllo[1]==1)) return 0;
@@ -185,7 +184,7 @@ int step (int* next_i, int* next_j, adj_t ad, char** mat, int n, int m){
   (*next_i)++;
   //ricorsione
   if(step(next_i,next_j,ad,mat,n,m)==0) return 0,a=0;
-  else return -1,a=0;
+  return -1,a=0;
 }
 
 
@@ -207,20 +206,21 @@ obstacle_t * string_to_obstacle (char * s){
   char *segno2,*segno1;
   for(int j=0;j<4;j++){
     char c;
-    if(j==0) segno1=s;
-    if(j!=3) segno2=strchr(segno1,' ');
+    if(j==0) segno1=s;//se si è appena entrati nel loop segno1=s
+    if(j!=3) segno2=strchr(segno1,' ');//se non si è arrivati all'ultimo numero segno2 punta al primo spazio dopo segno1
     if(j==3 && strchr(s,'\n')==NULL) segno2=strchr(s,'\0');
     if(j==3 && strchr(s,'\n')!=NULL) segno2=strchr(s,'\n');
-    int len=segno2-segno1;
+    int len=segno2-segno1;//individuo la lunghezza del numero scritto nella stringa
     int n=0;
-    for(int i=0;i<len;i++){
+    for(int i=0;i<len;i++){//questo loop serve per trasformare una stringa in numero
       n=n+(*(segno1+i)-'0')*pow(10,len-i-1);
     }
     if(j<3 && segno2==strchr(s,'\n')) return NULL;
-    pos[j]=n;
-    if(j!=3) segno1=segno2+1;
+    /*controllo errori che ho scritto tempo fa e ora mi sembra inutile ma lo lascio per sicurezza*/
+    pos[j]=n;//metto il numero nel vettore
+    if(j!=3) segno1=segno2+1;//sistemo i segni per il prossimo for loop
   }
-  if(pos[0]<=pos[2] && pos[1]<=pos[3]){
+  if(pos[0]<=pos[2] && pos[1]<=pos[3]){//controllo che l'ostacolo sia buono
     obstacle_t *rettangolo;
     if((rettangolo=(obstacle_t *)malloc(sizeof(obstacle_t)))==NULL){
       fprintf(stderr,"malloc torna null\n");
@@ -286,11 +286,14 @@ comp=-1 se p<l->pobj e comp=0 se p==l->pobj
 */
   short comp=0;
   if(l!=NULL){
+    //il vettore pos[0] ha come elementi le coodirate dell'ostacolo p
+    //il vettore pos[01 ha come elementi le coodirate dell'ostacolo del prossimo elemento della lista
     unsigned pos[2][4];
     pos[0][0]=p->s_i,pos[1][0]=(l->pobj)->s_i;
     pos[0][1]=p->s_j,pos[1][1]=(l->pobj)->s_j;
     pos[0][2]=p->d_i,pos[1][2]=(l->pobj)->d_i;
     pos[0][3]=p->d_j,pos[1][3]=(l->pobj)->d_j;
+    //questo for loop serve per capire quale dei due ostacoli và per primo
     for(int i=0;i<4;i++){
       if(pos[0][i]>pos[1][i]) comp=-1;
       if(pos[0][i]<pos[1][i]) comp=1;

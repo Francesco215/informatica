@@ -64,8 +64,8 @@ int main (void) {
        	fprintf(stderr,"test 5.1.1 --> fallito!\n");
        	return EXIT_FAILURE;
   }
-fgets(s,K,f);
-  while (s!= NULL ) {
+
+  for(int i=0;i<12;i++) {
         p = string_to_obstacle(s);
         fgets(s,K,f);
         /* scarta gli ostacoli mal formati */
