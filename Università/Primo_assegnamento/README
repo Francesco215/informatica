@@ -1,0 +1,180 @@
+=========================================================================
+ISTRUZIONI per il PRIMO ASSEGNAMENTO INFORMATICA anno 2016/17
+========================================================================
+L'assegnamento prevede la realizzazione di alcune funzioni che realizzano
+un generatore pseudocasuale e una forma frattale per accrescimento.
+
+La descrizione del frattale si trova nel file drop.pdf.
+
+Cosa deve essere sviluppato:
+(1) le funzioni il cui prototipo si trova nel file myrand.h devono essere implementate in un file chiamato myrand.c
+(2) le funzioni il cui prototipo si trova nel file drop.h devono essere implementate in un file chiamato drop.c
+(3) [facoltativo] gli studenti che lo desiderano possono valutare la bont\`a del generatore utilizzato con i metodi che preferiscono e raccogliere le loro ocnsiderazioni in un file valutazione.pdf
+(4) i file drop.c myrand.c devono essere consegnati al docente nel formato "tar" creato automaticamente come descritto piu' sotto
+(5) il "tar" e l'eventuale file "valutazione.pdf" devono essere allegati ad una normale mail da inviare a susanna.pelagatti@unipi.it con oggetto"info17: consegna primo assegnamento"
+
+------------------------------------------------
+Estrarre il materiale dal KIT dell'assignment
+------------------------------------------------
+Creare una directory temporanea, copiare kit_a1.tar  
+nella directory e spostarsi nella directory appena creata. Es.
+
+$$ mkdir Assegnamento1
+$$ mv kit_a1.tar Assegnamento1
+$$ cd Assegnamento1
+
+S-tarare i file del kit con
+
+$$ tar xvf kit_a1.tar
+
+questo comando crea nella directory corrente una directory "DROP"
+con i seguenti file
+
+$$ ls DROP
+drop.pdf		: file contenente la descrizione del frattale
+
+myrand.h 		: header file che contiene i prototipi delle funzioni
+			  per la generazione della sequenza psudocasuale
+
+drop.h			: header file che contiene la definizione della matrice
+			  globale che rappresenta le aree di caduta e delle
+			  funzioni per la simulazione del frattale
+
+Makefile		: un file che permette l'automatizzazione della
+                          compilazione e dei test forniti dai
+			  docenti (NON MODIFICARE)
+			
+README			: questo file
+
+DATA/*			: file per il test automatico (NON MODIFICARE)
+
+
+gruppo-check.pl		: uno script Perl che controlla il formato del file
+			  gruppo.txt prima di effettuare la consegna
+			  (NON MODIFICARE)
+
+gruppo.txt		: un file di esempio di specifica del gruppo
+			  (massimo 2 studenti per gruppo)
+			  (deve essere aggiornato con i dati di chi consegna,
+			  secondo il formato esemplificato)
+
+========================================================================
+ISTRUZIONI per la realizzazione dell'assegnamento
+========================================================================
+
+L'assegnamento prevede la realizzazione di alcune funzioni
+(le specifiche dettagliate si trovano nei commenti dei file myrand.h e drop.h).
+
+Lo studente deve realizzare le funzioni secondo le specifiche, testandone via
+via il funzionamento con delle funzioni main() sviluppate in modo opportuno.
+
+Quando si e' ragionevolmente sicuri della corretetzza delle funzioni in base
+alle specifiche ed ai test che abbiamo effettuato si puo' passare ai test
+automatici contenuti nel Makefile e sviluppati dai docenti.
+E' importante non eseguire i test del Makefile
+con codice non precedentemente testato perche' in questo caso i risultati sarebebro di difficile interpretazione e fuorvianti.
+
+I test del Makefile sono 3:
+1) il primo, attivabile dando da shell il comando
+"make test1"
+testa il generatore di numeri casuali e le funzioni di inizializzazione e
+stampa della matrice.
+Il test non fa altro che eseguire il main() contenuto nel file "test_one.c" che lo studente e' invitato a leggere e comprendere.
+2) il secondo test, attivabile dando da shell il comando
+"make test2"
+testa anche la funzione step() che realizza un passo della
+simulazione del frattale su una matrice piuttosto piccola.
+Il test non fa altro che eseguire il main() contenuto nel file "test_two.c"
+che lo studente e' invitato a leggere e comprendere.
+3) il terzo test e' uguale al secondo ma effettua un numero maggiore
+di passi su una matrice piu' grande.
+
+Per effettuare automaticamente il cambio delle dimensioni
+della matrice il test utilizza dei file preconfezionati (in DATA/)
+che vengono utilizzati per modificare il file drop.h prima di eseguire l test.
+
+Solo gli elaborati che passano i 3 test possono essere consegnati.
+Per effettuare la consegna seguire le istruzioni piu' sotto
+
+------------------
+Come procedere --> i passi :
+-----------------
+
+1) leggere attentamente drop.pdf
+
+2) implementare e testare le funzioni in myrand.h nel file myrand.c
+
+3) implementare e testare le funzioni in drop.h nel file drop.c
+
+4) testare il software con i test forniti dai
+  docenti. 
+
+       $ make test1
+       $ make test2
+       $ make test3
+       
+
+  NOTA: (1) i file drop.c e myrand.c si devono trovare nella directory DROP/
+ 
+  (2) E' importante che il test fornito dai docenti venga effettuato solo su
+  un programma gia' funzionante e testato altrimenti i risultati
+  possono essere di difficile interpretazione, fuorvianti o inutili.
+
+5) preparare la documentazione: ovvero commentare adeguatamente i *.c
+   ed inserire un’ intestazione contenente i nomi
+   degli sviluppatori ed  una dichiarazione di originalita' 
+
+   /** \file pippo.c
+       \author Nino Bixio & Giuseppe Garibaldi
+     Si dichiara che il contenuto di questo file e' in ogni sua parte opera
+     originale degli  autori.  */
+
+
+6) aggiornare il file "gruppo.txt" con i nomi e dati degli sviluppatori
+
+7) consegnare il file eseguendo
+
+      bash:~$ make consegna
+
+   e seguendo le istruzioni.
+
+   Il target consegna crea un file tar che deve essere inviato
+   all'indirizzo del docente (se si e' fatta anche la parte facoltativa allegare anche il file PDF la discussione)
+
+   "info17: consegna primo assegnamento"
+
+   Se il make non funziona nell'ambiente in cui state sviluppando, create
+   un tar file con all'interno il file drop.c, myrand.c
+   e gruppo.txt ed inviatelo al
+   docente come sopra.
+   Tutte le consegne verranno confermate con un messaggio entro 2/3
+   giorni all'indirizzo da cui e' stata effettuata la consegna. In
+   caso questo non si verifichi contattare il docente.
+   
+
+---------------------------------------
+ NOTE IMPORTANTI: LEGGERE ATTENTAMENTE
+---------------------------------------
+
+1) tutti gli elaborati verranno confrontati fra di loro con tool automatici
+   per stabilire eventuali situazioni di PLAGIO. Se gli elaborato sono 
+   ragionevolmente simili verranno scartati.
+
+2) Chi in sede di orale risulta palesemente non essere l'autore del software
+   consegnato in uno degli assegnamenti dovra' ripetere l'esame
+
+3) Tutti i comportamenti scorretti ai punti 1 e 2 verranno segnalati
+   ufficialmente al presidente del corso di laurea
+
+----------------------------
+ VALUTAZIONE DELL'ASSEGNAMENTO:
+----------------------------
+
+Gli studenti che consegnano una versione funzionante e ragionevolmente
+corretta dell'assegnamento entro la data di scadenza accumulano un bonus di 2
+punti che verra' sommato al voto finale (vedi lucidi lezioni ed
+esercitazioni).
+
+La qualita' del codice consegnato e delle discussioni fornite per i 2
+assegnamenti sara' valutata complessivamente da 0 a 30 e fara' media
+con il voto dell'esame orale.
