@@ -1,0 +1,176 @@
+=========================================================================
+ISTRUZIONI per ASSEGNAMENTO di RECUPERO INFORMATICA anno 2017/18
+========================================================================
+L'assegnamento prevede la realizzazione di un albero ternario di ricerca con alcune funzioni.
+
+La descrizione dell'algoritmo si trova nel file testo.pdf.
+
+Come procedere:
+(1) le funzioni il cui prototipo si trova nel file ttree.h devono essere implementate in un file chiamato ttree.c
+(2) il file ttree.c deve essere consegnato al docente nel formato "tar" creato automaticamente come descritto piu' sotto
+(5) il "tar" deve essere allegato ad una normale mail da inviare al proprio docente (susanna.pelagatti@unipi.it o  marino@di.unipi.it) con oggetto"info18: consegna assegnamento recupero"
+
+------------------------------------------------
+Estrarre il materiale dal KIT dell'assignment
+------------------------------------------------
+Creare una directory temporanea, copiare kit_pr.tar  
+nella directory e spostarsi nella directory appena creata. Es.
+
+$$ mkdir Assegnamento
+$$ mv kit_pr.tar Assegnamento
+$$ cd Assegnamento
+
+S-tarare i file del kit con
+
+$$ tar xvf kit_pr.tar
+
+questo comando crea nella directory corrente una directory "TTREE"
+con i seguenti file
+
+$$ ls TTREE
+testo.pdf		: file contenente la descrizione dell'assegnamento
+
+ttree.h 		: header file che contiene i prototipi delle funzioni
+			  da realizzare
+
+01test.c
+02test.c
+03test.c
+03test.c
+04test.c
+05test.c
+06test.c
+07test.c
+08test.c		: file che contengono i main() di test forniti dai
+			  docenti (NON MODIFICARE)
+			  
+
+Makefile		: un file che permette l'automatizzazione della
+                          compilazione e dei test forniti dai
+			  docenti (NON MODIFICARE)
+
+ttree_d.c		: file che contiene la funzione di stampa dell'albero
+			usata nei test (non modificare)
+			
+README			: questo file
+
+
+gruppo-check.pl		: uno script Perl che controlla il formato del file
+			  gruppo.txt prima di effettuare la consegna
+			  (NON MODIFICARE)
+
+gruppo.txt		: un file di esempio di specifica del gruppo
+			  (massimo 2 studenti per gruppo)
+			  (deve essere aggiornato con i dati di chi consegna,
+			  secondo il formato esemplificato)
+
+========================================================================
+ISTRUZIONI per la realizzazione dell'assegnamento
+========================================================================
+
+L'assegnamento prevede la realizzazione di alcune funzioni
+(le specifiche dettagliate si trovano nei commenti dei file ttree.h).
+
+Lo studente deve realizzare le funzioni secondo le specifiche, testandone via
+via il funzionamento con delle funzioni main() sviluppate in modo opportuno.
+
+Quando si e' ragionevolmente sicuri della correttezza delle funzioni in base
+alle specifiche ed ai test che abbiamo effettuato si puo' passare ai test
+automatici contenuti nel Makefile e sviluppati dai docenti.
+E' importante non eseguire i test del Makefile
+con codice non precedentemente testato perche' in questo caso i risultati
+sarebebro di difficile interpretazione e fuorvianti.
+
+I test del Makefile sono 8 e sono attivabili dando da shell i comandi:
+"make test1" esegue il codice in 01test.c
+"make test2" esegue il codice in 02test.c
+"make test3" esegue il codice in 03test.c
+"make test4" esegue il codice in 04test.c
+"make test5" esegue il codice in 05test.c
+"make test6" esegue il codice in 06test.c
+"make test7" esegue il codice in 07test.c
+"make test8" esegue il codice in 08test.c
+
+Solo gli elaborati che passano gli 8 test possono essere consegnati.
+Per effettuare la consegna seguire le istruzioni piu' sotto
+
+------------------
+Come procedere --> i passi :
+-----------------
+
+1) leggere attentamente testo.pdf
+
+2) implementare e testare le funzioni in ttree.h nel file ttree.c
+
+3) testare il software con i test forniti dai
+  docenti. 
+
+       $ make test1
+       $ make test2
+       $ make test3
+       $ make test4
+       $ make test5
+       $ make test6
+       $ make test7
+       $ make test8
+       
+
+  NOTA: (1) il file ttree.c si deve trovare nella cartella TTREE/
+ 
+  (2) E' importante che il test fornito dai docenti venga effettuato solo su
+  un programma gia' funzionante e testato altrimenti i risultati
+  possono essere di difficile interpretazione, fuorvianti o inutili.
+
+4) preparare la documentazione: ovvero commentare adeguatamente i *.c
+   ed inserire un’ intestazione contenente i nomi
+   degli sviluppatori ed  una dichiarazione di originalita' 
+
+   /** \file pippo.c
+       \author Nino Bixio & Giuseppe Garibaldi
+     Si dichiara che il contenuto di questo file e' in ogni sua parte opera
+     originale degli  autori.  */
+
+
+5) aggiornare il file "gruppo.txt" con i nomi e dati degli sviluppatori
+
+6) consegnare il file eseguendo
+
+      bash:~$ make consegna
+
+   e seguendo le istruzioni.
+
+   Il target consegna crea un file tar che deve essere inviato
+   all'indirizzo del docente 
+
+   "info18: consegna assegnamento recupero"
+
+   Se il make non funziona nell'ambiente in cui state sviluppando, create
+   un tar file con all'interno il file ttree.c
+   e gruppo.txt ed inviatelo al
+   docente come sopra.
+   Tutte le consegne verranno confermate con un messaggio entro 2/3
+   giorni all'indirizzo da cui e' stata effettuata la consegna. In
+   caso questo non si verifichi contattare il docente.
+   
+
+---------------------------------------
+ NOTE IMPORTANTI: LEGGERE ATTENTAMENTE
+---------------------------------------
+
+1) tutti gli elaborati verranno confrontati fra di loro con tool automatici
+   per stabilire eventuali situazioni di PLAGIO. Se gli elaborati sono 
+   ragionevolmente simili verranno scartati.
+
+2) Chi in sede di orale risulta palesemente non essere l'autore del software
+   consegnato in uno degli assegnamenti dovra' ripetere l'esame
+
+3) Tutti i comportamenti scorretti ai punti 1 e 2 verranno segnalati
+   ufficialmente al presidente del corso di laurea
+
+----------------------------
+ VALUTAZIONE DELL'ASSEGNAMENTO:
+----------------------------
+
+La qualita' del codice consegnato e delle discussioni fornite per l'assegnamento 
+sara' valutato complessivamente da 0 a 30 e fara' media
+con il voto dell'esame orale.
