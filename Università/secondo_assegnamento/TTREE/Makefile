@@ -10,7 +10,7 @@
 FILE_DA_CONSEGNARE=ttree.c
 
 # preferenze compilatore e flag di compilazione
-CC=clang
+CC=gcc
 # compilazione 
 CFLAGS= -Wall -pedantic -g
 
@@ -21,28 +21,28 @@ obj = ttree.o ttree_d.o
 
 
 ttree1 : 01test.o $(obj)
-	clang $(obj) 01test.o -o ttree1 -lm
+	gcc $(obj) 01test.o -o ttree1 -lm
 
 ttree2 : 02test.o $(obj)
-	clang $(obj) 02test.o -o ttree2 -lm
+	gcc $(obj) 02test.o -o ttree2 -lm
 
 ttree3 : 03test.o $(obj)
-	clang $(obj) 03test.o -o ttree3 -lm
+	gcc $(obj) 03test.o -o ttree3 -lm
 
 ttree4 : 04test.o $(obj)
-	clang $(obj) 04test.o -o ttree4 -lm
+	gcc $(obj) 04test.o -o ttree4 -lm
 
 ttree5 : 05test.o $(obj)
-	clang $(obj) 05test.o -o ttree5 -lm
+	gcc $(obj) 05test.o -o ttree5 -lm
 
 ttree6 : 06test.o $(obj)
-	clang $(obj) 06test.o -o ttree6 -lm
+	gcc $(obj) 06test.o -o ttree6 -lm
 	
 ttree7 : 07test.o $(obj)
-	clang $(obj) 07test.o -o ttree7 -lm
+	gcc $(obj) 07test.o -o ttree7 -lm
 
 ttree8 : 08test.o $(obj)
-	clang $(obj) 08test.o -o ttree8 -lm
+	gcc $(obj) 08test.o -o ttree8 -lm
 
 ttree.o: ttree.c ttree.h 
 ttree_d.o: ttree_d.c ttree.h 

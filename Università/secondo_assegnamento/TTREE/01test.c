@@ -51,7 +51,6 @@ int main (void) {
   }
 
   stampa_albero(root,stdout);
-  fprintf(stdout,"-----------");
   /* Test 1.2 */
   fprintf(stdout,"Test 1.2: \n");
 
