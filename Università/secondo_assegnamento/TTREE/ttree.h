@@ -31,7 +31,12 @@ typedef struct nodo {
 */
 void stampa_albero (nodo_t * root, FILE* f);
 
-void attacca(int x,nodo_t * indirizzo);
+/*inizializza una chiave con l'intero x a l'attacca al puntatore "*indirizzo"
+    \param x chiava da inerire
+    \param indirizzo puntatore al puntatore del nodo in cui si inerisce il nuovo nodo
+*/
+                  
+void attacca(int x,nodo_t ** indirizzo);
 
 /** Inserisce una nuova chiave nell'albero mantenendo l'ordinamento
     \param x chiave da inserire
@@ -40,14 +45,6 @@ void attacca(int x,nodo_t * indirizzo);
  */
 void inserisci (int x, nodo_t ** proot);
 
-/*ritorna il puntatore al nodo più grande di un sottoalbero con radice root
-  \param root puntatore al sottoalbero con radice root
-  \retval puntatore al nodo col valore più grande
-*/
-nodo_t ** cerca_max(nodo_t ** root);
-nodo_t ** cerca_min(nodo_t ** root);
-
-void cancella_aux(nodo_t ** proot);
 
 /** Cancella UNA SOLA OCCORRENZA della chiave nell'albero (se presente) 
     mantenendo l'ordinamento
@@ -88,7 +85,6 @@ int leggi_albero(FILE* f, nodo_t** root);
 
 void ordine (nodo_t * root);
 
-int * cerca1_aux(nodo_t * root);
 /**
 	Dato un nodo y, sia M(y) il numero di nodi nel sottoalbero mid di y e L(y) il numero di nodi nel sottoalbero left di y. 
 	Stampare le chiavi di tutti i nodi y tali che M(y)<L(y).

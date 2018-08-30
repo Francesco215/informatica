@@ -1,7 +1,7 @@
 #include "ttree.h"
 
 int n=14;
-const int chiavi[]={1,7,-8,-4,-3,4,-10,-9,80,22,-56,15,15,15,13,14};
+const int chiavi[]={1,1,1,1,1,1,1,7,-8,-4,-3,4,-10,-9,80,22,-56,15,15,15,13,14};
 
 int main(void){
 	nodo_t *root=NULL;
@@ -18,5 +18,7 @@ int main(void){
 	printf("-------------------\n");
 	ordine(root);
 	*/
-	cerca1(root);
+	//cerca1(root);
+	free_albero(&root);
+	scrivi_albero(stdout,root);
 }

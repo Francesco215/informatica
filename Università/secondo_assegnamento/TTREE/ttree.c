@@ -1,8 +1,7 @@
-/**
-\file
-  \authors informatica (CDS Fisica) 2017/18
-  \brief Progetto di Recupero: intestazione delle funzioni da implementare
-*/
+/** \file ttree.c
+       \author Francesco Sacco
+     Si dichiara che il contenuto di questo file e' in ogni sua parte opera
+     originale dell'autore.  */
 
 /* protezione inclusioni multiple */
 
@@ -25,13 +24,6 @@ typedef struct nodo {
 } nodo_t;
 
 
-/** FORNITA DAI DOCENTI -- NON MODIFICARE
-  Funzione che stampa il t-tree su stdout
-  \param root radice dell'albero da stampare
-  \param f file stream dove stampare
-*/
-void stampa_albero (nodo_t * root, FILE* f);
-
 /*inizializza una chiave con l'intero x a l'attacca al puntatore "*indirizzo"
     \param x chiava da inerire
     \param indirizzo puntatore al puntatore del nodo in cui si inerisce il nuovo nodo
@@ -40,6 +32,7 @@ void stampa_albero (nodo_t * root, FILE* f);
 void attacca(int x,nodo_t ** indirizzo){
   //alloco la memoria e la faccio puntare da indirizzo
   *indirizzo=(nodo_t *)malloc(sizeof(nodo_t));
+  if(indirizzo==NULL){fprintf(stderr, "Errore fatale\n");exit(EXIT_FAILURE);}
   //inizializzo il nuovo nodo
   (**indirizzo).key=x;
   (**indirizzo).left=NULL;
@@ -53,6 +46,7 @@ void attacca(int x,nodo_t ** indirizzo){
  */
 
 void inserisci (int x, nodo_t ** proot){
+  if(proot==NULL) return;
   //non appena si arriva alla punta dell'albero si ci attacca un nuovo nodo
   if (*proot==NULL) {attacca(x,proot); return;}
   //queste 3 linee di codice servono a capire in che direzione andare
@@ -66,40 +60,20 @@ void inserisci (int x, nodo_t ** proot){
   \retval puntatore al nodo col valore più grande (o piccolo)
 */
 nodo_t ** cerca_max(nodo_t ** root){
+  //vado a sinistra finchè non trovo il nodo con lavore massimo
   if((**root).left==NULL) return root;
+  //restituisco il puntatore al puntatore al massimo
   return cerca_max(&((**root).left));
 }
-nodo_t ** cerca_min(nodo_t ** root){
+nodo_t ** cerca_min(nodo_t ** root){//funziona come la funzione di prima
   if((**root).right==NULL) return root;
   return cerca_min(&((**root).right));
-}
-
-/** Serve per rendere il codice della funzione "cancella" più leggibile,
-  consiglio di leggersi prima quella funzione.
-
-  cancella il nodo **proot nel caso in cui **proot.mid==0 e 
-  **proot.left,**proot.right !=0 mantenendo l'ordinamento dell'albero
-    \param proot puntatore al puntatore del nodo
-  */
-void cancella_aux(nodo_t ** proot){
-  nodo_t **max=NULL,**min=NULL;//inizializzo le due variabili ausilarie **max e **min
-  max=cerca_max(&(**proot).right);//trovo il massimo **max del sottoalbero di **proot
-  min=cerca_min(max);//trovo il minimo **min del sottoalbero di **max
-  /*faccio puntare a **min.right la cella a destra di **proot a meno che non sia
-  il *max, perchè senò entrerebbe in un loop  */
-  if(*max!=(**proot).right) (**min).right=(**proot).right;
-  //faccio puntare il sottoalbero a sinistra di **proot dal puntatore sinistro di **max
-  (**max).left=(**proot).left;
-  free(*proot);//libero la memoria del nodo cancellato
-  *proot=*max;//faccio puntare *proot al nodo **max
-  *max=NULL;//faccio puntare *max a niente
 }
 
 /** Cancella UNA SOLA OCCORRENZA della chiave nell'albero (se presente) 
     mantenendo l'ordinamento
     \param x chiave da cancellare
     \param proot puntatore al puntatore alla radice del albero
-
  */
 void cancella (int x, nodo_t ** proot){
   //questa riga serve per fermare la funzione se non trova il nodo con la chiave x
@@ -118,9 +92,19 @@ void cancella (int x, nodo_t ** proot){
   temp=*proot;
   if((**proot).left==NULL)  {*proot=(**proot).right; free(temp); return;}
   if((**proot).right==NULL)  {*proot=(**proot).left; free(temp); return;}
-  /*se ha entrabi i sottoalberi uso la funzione cancella_aux per
-    rendere il codice più leggibile */
-  cancella_aux(proot);  
+  /* adesso siamo nel caso in cui **root ha sia un sottoalbero destro che sinistro,
+  ma non ne ha uno centrale*/
+  nodo_t **max=NULL,**min=NULL;//inizializzo le due variabili ausilarie **max e **min
+  max=cerca_max(&(**proot).right);//trovo il massimo **max del sottoalbero di **proot
+  min=cerca_min(max);//trovo il minimo **min del sottoalbero di **max
+  /*faccio puntare a **min.right la cella a destra di **proot a meno che non sia
+  il *max, perchè senò entrerebbe in un loop  */
+  if(*max!=(**proot).right) (**min).right=(**proot).right;
+  //faccio puntare il sottoalbero a sinistra di **proot dal puntatore sinistro di **max
+  (**max).left=(**proot).left;
+  free(*proot);//libero la memoria del nodo cancellato
+  *proot=*max;//faccio puntare *proot al nodo **max
+  *max=NULL;//faccio puntare *max a niente  
 }
 
 /** libera tutta la memoria occupata dall'albero
@@ -143,9 +127,10 @@ void free_albero (nodo_t ** root){
     \retval -1 se si e' verificato un errore 
  */
 int scrivi_albero(FILE* f, nodo_t* root){
-  if(f==NULL) return -1;
-  if (root==NULL) return 0;
-  fprintf(f,"%d\n",root->key);
+  if(f==NULL || ferror(f)!=0) return -1;//controllo errori
+  if (root==NULL) return 0;//fermo la ricorsione quando si arriva alla fine
+  fprintf(f,"%d\n",root->key);//stampo la chiave
+  //vado prima nel sottoalbero sinistro, poi quello destro e poi quello centrale
   scrivi_albero(f,root->left);
   scrivi_albero(f,root->mid);
   scrivi_albero(f,root->right);
@@ -160,10 +145,10 @@ int scrivi_albero(FILE* f, nodo_t* root){
     \retval -1 se si e' verificato un errore 
  */
 int leggi_albero(FILE* f, nodo_t** root){
-  if(f==NULL) return -1;
-  int chiave;
+  if(f==NULL || ferror(f)!=0) return -1;//controllo errori
+  int chiave;//valore temporaneo da assegnargli valore con lo scanf
   while(fscanf(f,"%d",&chiave)!=EOF){
-  inserisci(chiave,root);
+  inserisci(chiave,root);//inserisco la chiave nell'albero con la funzione inserisci()
   }
   return 0;
 }
@@ -174,61 +159,60 @@ int leggi_albero(FILE* f, nodo_t** root){
 */
 
 void ordine (nodo_t * root){
-  if(root->right!=NULL) ordine(root->right);
-  printf("%d\n",root->key);
-  if(root->left!=NULL)  ordine(root->left);
+  if(root->right!=NULL) ordine(root->right);// stampo il sottoalbero destro
+  printf("%d\n",root->key);//poi quello centrale
+  if(root->left!=NULL)  ordine(root->left);//poi quello sinistro
   return;
 }
-/*
-int * conta_nodi(nodo_t * root){
-  int *conto;
-  conto=(int *)malloc(sizeof(int)*3);
-  for (int i=0;i<3;i++) conto[i]=0;
-  if (root->left!=NULL){
-    conto[0]++;
-    for (int i=0;i<3,i++) conto[0]=conto[0]+conta_nodi(root->left)[i];
-    free(conta_nodi(root->left));}
-  if (root->mid!=NULL) {
-    conto[1]++;
-    for (int i=0;i<3,i++) conto[1]=conto[1]+conta_nodi(root->mid)[i];
-    free(conta_nodi(root->mid));}
-  if (root->right!=NULL) {
-    conto[2]++;
-    for (int i=0;i<3,i++) conto[2]=conto[2]+conta_nodi(root->right)[i];
-    free(conta_nodi(root->right));}
-  return conto;
-}*/
 
 /*
-  La funzione fa esattamente quello che cerca1 fa, solo che ritorna un vettore che serve
-  quando si fa la ricorsione
+  La funzione fa esattamente quello che le funzioni cerca fanno,
+  solo che ritorna un vettore che serve quando si fa la ricorsione
   \param root radice dell'albero
-  \retval conto[] vettore a due indici, conto[0] indica L(y) mentre conto[1] indica M(y)
+  \param cerca indica quale delle funzioni "cerca" si vuole usare
+  \param livello indica in che livello dell'albero si è
+  \retval vett[] vettore a quattro indici:
+    vett[0],vett[1],vett[2] indicano rispettivamente il numero di nodi nei sottoalberi di
+    sinistra, centro e destra, mentre vett[3] indica la somma di tutte le chiavi dei nodi
+    del sottoalbero di root 
 */
-int * cerca1_aux(nodo_t * root){
-  /*conto è il vettore da ritornare mentre temp assume i valori
-  ritornati dai nodi più in basso*/
-  int *conto,*temp;
-  conto=(int *)malloc(sizeof(int)*3);//alloco la memoria per conto
-  conto[0]=0;conto[1]=0;conto[2]=0;// inizializzo il vettore
+int * cerca_aux(nodo_t * root, int cerca, unsigned int livello){
+  //vett è il vettore da ritornare mentre sott_vett è il vettore ritornato dai sottoalberi
+  int *vett,*sott_vett;
+  vett=(int *)calloc(4,sizeof(int));//alloco la memoria per vett
+  //gestione errori di allocazione
+  if(vett==NULL){fprintf(stderr, "Errore fatale\n");exit(EXIT_FAILURE);}
+  vett[3]=root->key;// inizializzo assegno a vett[3] il valore della chiave del nodo
   if (root->left!=NULL){//nel caso in cui il nodo di sinistra non è nullo
-    //assegno a temp il vettore ritornato da cerca1_aux(root->left)
-    temp=cerca1_aux(root->left);
-    conto[0]=1+temp[0]+temp[1]+temp[2];
-    free(temp);
+    //assegno a sott_vett il vettore ritornato da cerca_aux(root->left)
+    sott_vett=cerca_aux(root->left,cerca,livello +1);
+    /*qui uso il fatto che il numero di nodi sotto un sottoalbero è uguale alla somma
+    del numero di nodi sotto ogni sotto-sottoalbero + 1 */
+    vett[0]=1+sott_vett[0]+sott_vett[1]+sott_vett[2];
+    //a vett[3] gli sommo la somma di tutti i vettori nel sottoalbero di sinistra
+    vett[3]=vett[3]+sott_vett[3];
+    //libero la memoria allocata quando si chiama la funzione cerca_aux(root->left)
+    free(sott_vett);
   }
-  if (root->mid!=NULL) {
-    temp=cerca1_aux(root->mid);
-    conto[1]=1+temp[0]+temp[1]+temp[2];
-    free(temp);
+  if (root->mid!=NULL) {//il funzionamento è identico a quello dell'if di prima di prima
+    sott_vett=cerca_aux(root->mid,cerca,livello+1);
+    vett[1]=1+sott_vett[0]+sott_vett[1]+sott_vett[2];
+    vett[3]=vett[3]+sott_vett[3];
+    free(sott_vett);
   }
-  if (root->right!=NULL){
-    temp=cerca1_aux(root->right);
-    conto[1]=1+temp[0]+temp[1]+temp[2];
-    free(temp);
+  if (root->right!=NULL){//il funzionamento è identico a quello dell'if di prima di prima
+    sott_vett=cerca_aux(root->right,cerca,livello+1);
+    vett[2]=1+sott_vett[0]+sott_vett[1]+sott_vett[2];
+    vett[3]=vett[3]+sott_vett[3];
+    free(sott_vett);
   }
-  if(conto[1]<conto[0]) printf("%d\n",root->key);
-  return conto;
+  //verifico se la condizione per la funzione cerca1 è verificata
+  if(vett[1]<vett[0] && cerca==1) printf("%d\n",root->key);
+  //verifico se la condizione per la funzione cerca2 è verificata
+  if(vett[3]/(1+vett[0]+vett[1]+vett[2])<5 && cerca==2) printf("%d\n",root->key);
+  //verifico se la condizione per la funzione cerca3 è verificata
+  if((livello+vett[0]+vett[2])%3==0 && cerca==3) printf("%d\n",root->key);
+  return vett;
 }
 
 /**
@@ -237,7 +221,7 @@ int * cerca1_aux(nodo_t * root){
   \param root radice dell'albero
 */
 void cerca1 (nodo_t * root){
-  free(cerca1_aux(root));
+  free(cerca_aux(root,1,0));
 }
 
 /**
@@ -245,14 +229,18 @@ void cerca1 (nodo_t * root){
   Stampare le chiavi di tutti i nodi y tali che A(y)<5.
   \param root radice dell'albero
 */
-void cerca2 (nodo_t * root);
+void cerca2 (nodo_t * root){
+  free(cerca_aux(root,2,0));
+}
 
 /**
   Dato un nodo y, sia H(y) il suo livello, L(y) il numero di nodi contenuti nel suo sottoalbero left, R(y) il numero di nodi contenuti nel suo sottoalbero right.
   Stampare le chiavi dei nodi y tali che L(y)+R(y)+H(y) è multiplo di 3.
   \param root radice dell'albero
 */
-void cerca3 (nodo_t * root);
+void cerca3 (nodo_t * root){
+  free(cerca_aux(root,3,0));
+}
 
 #endif
 

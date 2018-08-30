@@ -56,9 +56,8 @@ int main (void) {
   }
 
     stampa_albero(root,fd);
-
     fclose(fd);
-  
+
   /* scrittura su file */
   if ( ( fd = fopen(FILEDUMP,"w") ) == NULL ) {
     perror("fopen:");
@@ -68,6 +67,8 @@ int main (void) {
   /* scrittura su file descriptor non valido */
   if ( scrivi_albero(NULL,root) != -1 )
     return EXIT_FAILURE;
+      printf("aaaa\n");
+
 
   if ( scrivi_albero(fd,root) != 0 )
     return EXIT_FAILURE;

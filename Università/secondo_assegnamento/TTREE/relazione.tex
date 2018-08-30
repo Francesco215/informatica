@@ -1,0 +1,67 @@
+\documentclass{paper}
+\date{Agosto 2018}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{mathrsfs}
+\usepackage{listings}
+\usepackage[utf8x]{inputenc}
+\lstset{basicstyle=\small\ttfamily}
+\lstset{language=C}
+\title{Relazione assegnamento di recupero}
+\author{Francesco Sacco}
+\begin{document}
+\maketitle
+\section{Problemi con il primo test}
+	Il file  \lstinline!TTREE/DATI/out1.check.txt! da comparare all'output in uscita di test1 è questo:
+	\begin{lstlisting}
+		Test 1.1: 
+		Albero vuoto
+		--> L0 (rr) 12 
+		--> L1 (lf) 45 
+		--> L2 (lf) 56 
+		--> L3 (lf) 78 
+		--> L3 (md) 56 
+		--> L4 (md) 56 
+		--> L3 (rg) 51 
+		--> L1 (rg) 4 
+		--> L2 (lf) 9 
+		--> L3 (md) 9 
+		--> L4 (md) 9 
+		--> L3 (rg) 6 
+		--> L2 (rg) -9 
+		--> L3 (lf) 3 
+		--> L4 (md) 3 
+		--> L3 (rg) -22 
+		Test 1.2: 
+	\end{lstlisting}
+	In pratica prima stampa \lstinline!Test 1.1:!, poi stampa prima un'albero vuoto e poi uno non vuoto attraverso la funzione scritta dal docente \lstinline!stampa_albero()!, e infine stampa \lstinline!Test 1.2:!.\newline
+	Tuttavia la funzione \lstinline!stampa_albero()! stampa \lstinline!------------------------! quando l'albero passato come argomeno non è vuoto, quindi il file uscito dal \lstinline!Test1! è così
+	\begin{lstlisting}
+		Test 1.1: 
+		Albero vuoto
+		--> L0 (rr) 12 
+		--> L1 (lf) 45 
+		--> L2 (lf) 56 
+		--> L3 (lf) 78 
+		--> L3 (md) 56 
+		--> L4 (md) 56 
+		--> L3 (rg) 51 
+		--> L1 (rg) 4 
+		--> L2 (lf) 9 
+		--> L3 (md) 9 
+		--> L4 (md) 9 
+		--> L3 (rg) 6 
+		--> L2 (rg) -9 
+		--> L3 (lf) 3 
+		--> L4 (md) 3 
+		--> L3 (rg) -22 
+		------------------------
+		Test 1.2: 
+	\end{lstlisting}
+	Visto che c'è questa "linea in più" non mi faceva superare il test, quindi mi sono trovato costretto a modificare il file \lstinline!TTREE/DATI/out1.check.txt! per metterci la linea mancante.
+\section{Funzione di scrittura}
+	La funzione \lstinline!scrivi_albero(FILE * f, nodo_t * root)! stampa una lista di numeri messi in colonna, prima stampa il valore della chaive contenuto nel nodo	\lstinline!*root! e poi agisce ricorsivamente sui suoi sottoalberi\footnote{l'ordine non è importante, ma comunque prima stampa il sottoalbero sinistro, poi quello centrale e poi quello destro}.\newline
+	Ho scelto di farla così perchè è simile alla funzione di stampa fornita dal docente e rende la funzione di lettura semplice.\newline
+	Se si vuole sapere che forma ha l'albero basta scriverlo su carta leggendo un elemento della lista per volta e usando un'algoritmo identico alla funzione \newline
+	\lstinline!inserisci (int x, nodo_t ** proot)!.
+\end{document}
